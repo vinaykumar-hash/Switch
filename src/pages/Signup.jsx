@@ -1,9 +1,50 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { supabase } from "../supaBase";
 import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const navigate = useNavigate();
+    useEffect(() => {
+        const getProfile = async () => {
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser();
+    
+          if (userError) {
+            console.error("Error fetching user:", userError);
+            navigate("/login");
+            return;
+          }
+    
+          if (user) {
+            navigate('/');
+            // setUser(user);
+            // const { data: profiles, error: profileError } = await supabase
+            //   .from("profiles")
+            //   .select("*")
+            //   .eq("id", user.id)
+            //   .single();
+    
+            // if (profileError) {
+            //   console.error("Error fetching profile:", profileError);
+            //   // If profile doesn't exist, it's fine, we'll create it.
+            // } else {
+            //   setProfile(profiles);
+            //   setName(profiles.full_name || "");
+            //   // Find the index of the current avatar_url if it exists
+            //   const currentAvatarIndex = avatars.indexOf(profiles.avatar_url);
+            //   if (currentAvatarIndex !== -1) {
+            //     setSelected(currentAvatarIndex);
+            //   }
+            // }
+          } else {
+            
+          }
+        };
+    
+        getProfile();
+      }, [navigate]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
