@@ -16,7 +16,7 @@ function SideMenu() {
             }`}
             onClick={() => setSelected(0)}
           >
-            <img className="scale-75" src="../src/assets/logo/Shirt.png" alt="" />
+            <img className="scale-75" src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Shirt.png" alt="" />
             <h1 className="">Clothes</h1>
           </button>
           <button
@@ -25,7 +25,7 @@ function SideMenu() {
             }`}
             onClick={() => setSelected(1)}
           >
-            <img className="scale-75" src="../src/assets/logo/Brush.png" alt="" />
+            <img className="scale-75" src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Brush.png" alt="" />
             <h1 className="">Creations</h1>
           </button>
         </div>

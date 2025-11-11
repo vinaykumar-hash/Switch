@@ -81,7 +81,6 @@ function Main() {
 
   const handleEnhance = async () => {
     try {
-      setLoading(true);
       const response = await axios.post(import.meta.env.VITE_BACKEND_URL+"/api/gemini/optimize-prompt", { prompt });
       if (response.data?.optimized_prompt) {
         const enhanced = response.data.optimized_prompt;
@@ -93,7 +92,6 @@ function Main() {
     } catch (error) {
       alert("Error enhancing prompt: " + error.message);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -110,9 +108,7 @@ function Main() {
         Let’s Start <span className="font-semibold text-white">Fresh</span>
       </h1>
 
-      {/* Top Section */}
       <div className="flex flex-col sm:flex-row gap-6 w-full max-w-5xl">
-        {/* Avatar Section */}
         <div className="flex flex-col items-center w-full sm:w-1/2">
           <div
             className="relative w-full aspect-square bg-white/10 rounded-lg flex items-center justify-center overflow-hidden"
@@ -160,7 +156,6 @@ function Main() {
           <p className="text-gray-400 text-sm mt-2">Your Avatar</p>
         </div>
 
-        {/* Cloths Section */}
         <div className="flex flex-col items-center w-full sm:w-1/2">
           <div className="w-full aspect-square bg-white/5 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-400 text-sm">
             {cloths.length > 0 ? <SelectedCloths /> : "Select Cloths From Side Menu"}
@@ -169,8 +164,7 @@ function Main() {
         </div>
       </div>
 
-      {/* Bottom Input Bar (now scoped inside main width) */}
-      <div className="fixed bottom-4 w-full flex justify-center">
+      <div className="fixed bottom-4 w-full flex justify-center z-10">
         <div className="flex w-full max-w-5xl bg-white/20 p-3 gap-3 shadow-md backdrop-blur-3xl rounded-lg">
           <input
             type="text"
@@ -184,7 +178,7 @@ function Main() {
             disabled={loading}
             className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-5 py-2 rounded-lg transition"
           >
-            <img src="../src/assets/logo/Star2.png" className="scale-110 hover:animate-spin transition-all" alt="" />
+            <img src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Star2.png" className="scale-110 hover:animate-spin transition-all" alt="" />
           </button>
           <button
             onClick={handleGenerate}
