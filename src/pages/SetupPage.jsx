@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "../supaBase";
+import supabase from "../supaBase.js";
 import { useNavigate } from "react-router-dom";
 
 export default function SetupProfile() {
@@ -11,7 +11,6 @@ export default function SetupProfile() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Build base url from env
   const supabaseBase = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
   const avatarFilenames = [
     "Profile.png",
@@ -47,14 +46,12 @@ export default function SetupProfile() {
 
       if (profileError) {
         console.error("Error fetching profile:", profileError);
-        // profile might not exist yet
         return;
       }
 
       setProfile(profiles);
       setName(profiles.full_name || "");
 
-      // If avatar_url stored is a full public URL, set state and find index
       if (profiles.avatar_url) {
         setAvatarUrl(profiles.avatar_url);
         const idx = avatars.indexOf(profiles.avatar_url);
@@ -63,7 +60,7 @@ export default function SetupProfile() {
     };
 
     getProfile();
-  }, [navigate]); // eslint-disable-line
+  }, [navigate]); 
 
   const handleSave = async () => {
     if (!name) {
@@ -81,7 +78,7 @@ export default function SetupProfile() {
       return;
     }
 
-    const avatarToSave = avatars[selected]; // full public URL built above
+    const avatarToSave = avatars[selected]; 
     console.log("Saving avatar URL to Supabase:", avatarToSave);
     const { data: updatedProfile, error } = await supabase
       .from("profiles")
@@ -108,7 +105,6 @@ export default function SetupProfile() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#111] text-white font-kollektif">
       <h2 className="text-2xl font-bold mb-8">Setup Your Avatar</h2>
 
-      {/* Show current avatar */}
       {avatarUrl && (
         <img
           src={avatarUrl}

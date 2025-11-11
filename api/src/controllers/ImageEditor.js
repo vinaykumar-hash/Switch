@@ -4,15 +4,9 @@ import { readFile } from "fs";
 import dotenv from "dotenv";
 import { saveImageToSupabase } from "../Utils/FileStorage.js";
 import { model } from "../config/gemini.js";
-
+import sharp from "sharp"; 
 dotenv.config();
 
-/**
- * Generate a new image using Gemini based on input images + prompt.
- * @param {string[]} imagePaths - Array of image paths or URLs.
- * @param {string} prompt - Description or edit instruction for Gemini.
- * @returns {Promise<{ mimeType: string, base64Data: string }>} - The generated image data.
- */
 export async function generate(imagePaths = [], prompt, requestId) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -29,13 +23,32 @@ export async function generate(imagePaths = [], prompt, requestId) {
           const arrBuffer = await res.arrayBuffer();
           buffer = Buffer.from(arrBuffer);
           mimeType = res.headers.get("content-type") || "image/png";
+          if (!mimeType || mimeType === "application/octet-stream") {
+            const ext = path.split(".").pop().toLowerCase();
+            mimeType =
+              mime.getType(ext) ||
+              (ext === "heic" || ext === "heif"
+                ? "image/jpeg"
+                : "image/png");
+          }
         } else {
           mimeType = mime.getType(path);
           buffer = await new Promise((resolve, reject) => {
             readFile(path, (err, data) => (err ? reject(err) : resolve(data)));
           });
         }
+        if (mimeType === "image/heic" || mimeType === "image/heif") {
+          console.log("🔄 Converting HEIC/HEIF to JPEG before sending to Gemini...");
+          const convertedBuffer = await sharp(buffer).jpeg().toBuffer();
+          buffer = convertedBuffer;
+          mimeType = "image/jpeg";
+        }
 
+        // ✅ Final fallback (some rare cases)
+        if (!mimeType.startsWith("image/")) {
+          console.warn(`⚠️ Forcing MIME type fallback for: ${path}`);
+          mimeType = "image/jpeg";
+        }
         return {
           inlineData: {
             mimeType,
@@ -65,7 +78,6 @@ export async function generate(imagePaths = [], prompt, requestId) {
     const mimeType = part.inlineData.mimeType || "image/png";
     const buffer = Buffer.from(part.inlineData.data || "", "base64");
 
-    // Save to Supabase instead of locally
     console.log(requestId)
     const publicUrl = await saveImageToSupabase(buffer, mimeType, requestId, prompt);
 

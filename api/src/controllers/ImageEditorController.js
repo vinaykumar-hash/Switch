@@ -1,4 +1,4 @@
-import { generate } from "../controllers/ImageEditor.js";// adjust the path if needed
+import { generate } from "../controllers/ImageEditor.js";
 
 export const editImage = async (req, res) => {
   try {

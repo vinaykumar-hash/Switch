@@ -1,9 +1,10 @@
 import React, { useEffect,useState } from "react";
-import { supabase } from "../supaBase"; // ✅ import your Supabase client
+import  supabase  from "../supaBase"; 
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import SideMenu from "../../components/SideMenu";
 import Main from "../../components/Main";
+import Radio from "../../components/Radio";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -11,7 +12,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     const getProfile = async () => {
-      // Get logged-in user
       const {
         data: { user },
         error: userError,
@@ -23,10 +23,9 @@ export default function Dashboard() {
         return;
       }
 
-      console.log("✅ Logged in user:", user);
+      console.log(" Logged in user:", user);
       setUser(user);
 
-      // Get profile from 'profiles' table
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("*")
@@ -34,9 +33,9 @@ export default function Dashboard() {
         .single();
 
       if (profileError) {
-        console.error("❌ Error fetching profile:", profileError);
+        console.error(" Error fetching profile:", profileError);
       } else {
-        console.log("✅ User profile:", profile);
+        console.log(" User profile:", profile);
       }
     };
 
@@ -48,8 +47,9 @@ export default function Dashboard() {
       {user ? <Header userID={user.id} /> : <p>Loading...</p>}
       <div className="flex items-start justify-start w-full flex-1">
         <SideMenu/>
-        <Main/>
+       {user ? <Main userID={user.id} /> : <p>Loading...</p>}
       </div>
+      {/* <Radio/> */}
     </div>
   );
 }

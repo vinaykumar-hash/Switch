@@ -4,7 +4,6 @@ function SelectedCloths() {
   const [cloths, setCloths] = useState([]);
 
   useEffect(() => {
-    // Load from localStorage initially
     const loadCloths = () => {
       const stored = JSON.parse(localStorage.getItem("selectedCloths")) || [];
       setCloths(stored);
@@ -12,7 +11,6 @@ function SelectedCloths() {
 
     loadCloths();
 
-    // Listen for custom events to update state when localStorage changes
     window.addEventListener("clothsUpdated", loadCloths);
 
     return () => {

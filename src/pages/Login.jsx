@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-import { supabase } from "../supaBase";
+import supabase from "../supaBase.js";
 import { useNavigate } from "react-router-dom";
-
+import ColorBends from "../../components/reactbits/ColorBends.jsx";
 export default function Login() {
   const navigate = useNavigate();
-  
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
   useEffect(() => {
       const getProfile = async () => {
         const {
@@ -23,25 +20,6 @@ export default function Login() {
   
         if (user) {
           navigate('/');
-          // setUser(user);
-          // const { data: profiles, error: profileError } = await supabase
-          //   .from("profiles")
-          //   .select("*")
-          //   .eq("id", user.id)
-          //   .single();
-  
-          // if (profileError) {
-          //   console.error("Error fetching profile:", profileError);
-          //   // If profile doesn't exist, it's fine, we'll create it.
-          // } else {
-          //   setProfile(profiles);
-          //   setName(profiles.full_name || "");
-          //   // Find the index of the current avatar_url if it exists
-          //   const currentAvatarIndex = avatars.indexOf(profiles.avatar_url);
-          //   if (currentAvatarIndex !== -1) {
-          //     setSelected(currentAvatarIndex);
-          //   }
-          // }
         } else {
           
         }
@@ -91,14 +69,50 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-primary-dark font-kollektif">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+    <div className="overflow-hidden flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-primary-dark font-kollektif">
+      {/* <div style={{ position: 'absolute', overflow: 'hidden' }} className="z-0 w-full h-full">
+  <FaultyTerminal
+    scale={1.5}
+    gridMul={[2, 1]}
+    digitSize={1.2}
+    timeScale={0.8}
+    pause={false}
+    scanlineIntensity={1}
+    glitchAmount={1}
+    flickerAmount={1}
+    noiseAmp={1}
+    chromaticAberration={0}
+    dither={0}
+    curvature={0.1}
+    tint="#A3B087"
+    mouseReact={true}
+    mouseStrength={0.5}
+    pageLoadAnimation={false}
+    brightness={0.1}
+  />
+</div> */}
+<div  className="z-0 absolute">
+        <ColorBends
+          colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
+          rotation={30}
+          speed={0.3}
+          scale={1.2}
+          frequency={1.4}
+          warpStrength={1.2}
+          mouseInfluence={0.8}
+          parallax={0.6}
+          noise={0.08}
+          transparent
+        />
+      </div>
+      
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm z-10">
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-white">
           Sign in to your account
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm z-10">
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <label

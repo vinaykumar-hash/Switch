@@ -1,7 +1,7 @@
 import React, { useState , useEffect } from "react";
-import { supabase } from "../supaBase";
+import supabase from "../supaBase.js";
 import { useNavigate } from "react-router-dom";
-
+import ColorBends from "../../components/reactbits/ColorBends.jsx";
 export default function Signup() {
   const navigate = useNavigate();
     useEffect(() => {
@@ -13,31 +13,11 @@ export default function Signup() {
     
           if (userError) {
             console.error("Error fetching user:", userError);
-            navigate("/login");
             return;
           }
     
           if (user) {
             navigate('/');
-            // setUser(user);
-            // const { data: profiles, error: profileError } = await supabase
-            //   .from("profiles")
-            //   .select("*")
-            //   .eq("id", user.id)
-            //   .single();
-    
-            // if (profileError) {
-            //   console.error("Error fetching profile:", profileError);
-            //   // If profile doesn't exist, it's fine, we'll create it.
-            // } else {
-            //   setProfile(profiles);
-            //   setName(profiles.full_name || "");
-            //   // Find the index of the current avatar_url if it exists
-            //   const currentAvatarIndex = avatars.indexOf(profiles.avatar_url);
-            //   if (currentAvatarIndex !== -1) {
-            //     setSelected(currentAvatarIndex);
-            //   }
-            // }
           } else {
             
           }
@@ -60,11 +40,9 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
 
-    // The 'name' is no longer used here, but will be collected on the setup page.
     const { email, password } = formData;
 
     try {
-      // Step 1: Sign up the user. The trigger will automatically create the profile.
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -82,14 +60,9 @@ export default function Signup() {
         return;
       }
 
-      // Step 2: Handle session and navigate
       if (authData.session) {
-        // User is signed in (e.g., email confirmation is disabled)
-        // The trigger has already created their profile.
-        alert("Signup successful! Welcome.");
         navigate("/setup");
       } else {
-        // User needs to confirm their email. The trigger has already created their profile.
         alert("Signup successful! Please check your email to confirm your account.");
         navigate("/login");
       }
@@ -102,14 +75,29 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-primary-dark font-kollektif">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+    <div className="relative flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-primary-dark font-kollektif">
+      <div  className="z-0 absolute">
+        <ColorBends
+          colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
+          rotation={30}
+          speed={0.3}
+          scale={1.2}
+          frequency={1.4}
+          warpStrength={1.2}
+          mouseInfluence={0.8}
+          parallax={0.6}
+          noise={0.08}
+          transparent
+        />
+      </div>
+      
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm z-10">
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-white">
           Create your account
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm z-10">
         <form className="space-y-6" onSubmit={handleSignup}>
           {/* Name */}
           <div>

@@ -1,5 +1,4 @@
 import { supabase } from "../config/supaBase.js";
-import { v4 as uuidv4 } from "uuid";
 
 
 export async function saveImageToSupabase(buffer, mimeType, requestId, prompt) {
@@ -8,7 +7,7 @@ export async function saveImageToSupabase(buffer, mimeType, requestId, prompt) {
     const fileName = `${requestId}_${Date.now()}.${fileExt}`;
     const filePath = `generated/${fileName}`;
 
-    const { data, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from("generated-images")
       .upload(filePath, buffer, {
         contentType: mimeType,
@@ -24,9 +23,8 @@ export async function saveImageToSupabase(buffer, mimeType, requestId, prompt) {
 
     const publicUrl = publicData.publicUrl;
 
-    const { error: dbError } = await supabase.from("generated_images").insert([
+    const { error: dbError } = await supabase.from("generated_cloths").insert([
       {
-        request_id: requestId,
         image_url: publicUrl,
         prompt,
       },
@@ -34,7 +32,7 @@ export async function saveImageToSupabase(buffer, mimeType, requestId, prompt) {
 
     if (dbError) throw dbError;
 
-    console.log(` Image uploaded and logged: ${publicUrl}`);
+    console.log(` Image saved and logged: ${publicUrl}`);
     return publicUrl;
   } catch (error) {
     console.error(" Error saving image to Supabase:", error.message);
