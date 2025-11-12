@@ -158,9 +158,9 @@ function Main() {
 
         <div className="flex flex-col items-center w-full sm:w-1/2">
           <div className="w-full aspect-square bg-white/5 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-            {cloths.length > 0 ? <SelectedCloths /> : "Select Cloths From Side Menu"}
+            {cloths.length > 0 ? <SelectedCloths /> : "Select Clothes From Side Menu"}
           </div>
-          <p className="text-gray-400 text-sm mt-2">Cloths</p>
+          <p className="text-gray-400 text-sm mt-2">Clothes</p>
         </div>
       </div>
 
