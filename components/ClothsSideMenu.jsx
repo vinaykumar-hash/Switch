@@ -44,12 +44,12 @@ function ClothsSideMenu() {
 
   return (
     <div className="flex flex-col h-full relative">
-      {loading ? <div className="absolute h-full w-full bg-white/10 backdrop-blur-3xl z-10 flex justify-center items-center">
-        <div className="h-10 w-10 bg-white animate-spin"></div>
+      {loading ? <div className="absolute h-full w-full  backdrop-blur-3xl z-10 flex justify-center items-center">
+        <div className="font-jolly text-4xl text-black animate-pulse">Switch</div>
       </div> : null}
       <div className="flex-1 overflow-y-auto px-4 py-2 scrollbar-hide">
-        <h2 className="text-sm font-semibold mb-2 text-gray-200">
-          Community Picks
+        <h2 className="text-sm font-semibold mb-2 text-gray-200 font-fustat ">
+          Clothes
         </h2>
 
         <div className="grid grid-cols-2">
@@ -67,18 +67,18 @@ function ClothsSideMenu() {
         </div>
       </div>
 
-      <div className="p-4 border-t border-white/10 bg-[#1a1a1a]">
+      <div className="absolute bottom-0 w-full font-fustat shadow-2xl shadow-black">
         <input
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Describe your outfit..."
-          className="w-full px-4 p-3 bg-white/10 text-white rounded-t-md translate-y-1 outline-none placeholder-gray-400"
+          className="transition-all backdrop-blur-sm duration-300 ease-in-out  focus-within:bg-primary-dark pb-4 mb-1 rounded-lg w-full px-4 p-3 bg-black/80 text-white   outline-none placeholder-gray-400 border border-white/10"
         />
 
         <button
           onClick={handleGenerate}
-          className="w-full text-lg py-2 bg-primary-tint text-black font-kollektif font-bold rounded-lg transition"
+          className="w-full text-lg py-2 bg-primary-tint  text-white font-fustat font-bold rounded-lg transition tracking-tight"
         >
           Generate
         </button>

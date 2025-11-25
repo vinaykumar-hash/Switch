@@ -5,13 +5,54 @@ import axios from "axios";
 import heic2any from "heic2any";
 
 function Main() {
+  const dragRef = React.useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const dragRefR = React.useRef(null);
+  const [isDraggingR, setIsDraggingR] = useState(false);
+  const [offsetR, setOffsetR] = useState({ x: 0, y: 0 });
   const [avatar, setAvatar] = useState(localStorage.getItem("userAvatar") || "");
   const [cloths, setCloths] = useState([]);
   const [hovering, setHovering] = useState(false);
   const [resultUrl, setResultUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
+  useEffect(() => {
+  const handleMouseMove = (e) => {
+    if (!isDragging || !dragRef.current) return;
 
+    dragRef.current.style.left = `${e.clientX - offset.x}px`;
+    dragRef.current.style.top = `${e.clientY - offset.y}px`;
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
+  window.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("mouseup", handleMouseUp);
+
+  return () => {
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+  };
+}, [isDragging, offset]);
+useEffect(() => {
+  const handleMouseMove = (e) => {
+    if (!isDraggingR || !dragRefR.current) return;
+
+    dragRefR.current.style.left = `${e.clientX - offsetR.x}px`;
+    dragRefR.current.style.top = `${e.clientY - offsetR.y}px`;
+  };
+
+  const handleMouseUp = () => setIsDraggingR(false);
+
+  window.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("mouseup", handleMouseUp);
+
+  return () => {
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+  };
+}, [isDraggingR, offsetR]);
   useEffect(() => {
     const loadCloths = () => {
       const stored = JSON.parse(localStorage.getItem("selectedCloths")) || [];
@@ -102,13 +143,17 @@ function Main() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start text-white w-full h-screen px-6 py-4 bg-[#0e0e0e] overflow-scroll scrollbar-hide relative">
+    <div className=" flex flex-col items-center justify-start text-white w-full h-screen px-6 py-4 bg-primary-dark overflow-scroll scrollbar-hide relative bg-[linear-gradient(to_right,#3332_1px,transparent_1px),linear-gradient(to_bottom,#3332_1px,transparent_1px)] bg-[size:40px_40px]">
       {/* Title */}
-      <h1 className="text-lg text-gray-300 mb-2 w-full max-w-5xl">
-        Let’s Start <span className="font-semibold text-white">Fresh</span>
-      </h1>
-
-      <div className="flex flex-col sm:flex-row gap-6 w-full max-w-5xl">
+      {/* form here */}
+      <div ref={dragRef}
+      onMouseDown={(e) => {
+        const rect = dragRef.current.getBoundingClientRect();
+        setOffset({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        setIsDragging(true);
+      }}
+      style={{ position: "absolute", cursor: "grab" }}
+      className="absolute bottom-0 flex flex-col sm:flex-row gap-6 w-full max-w-5xl">
         <div className="flex flex-col items-center w-full sm:w-1/2">
           <div
             className="relative w-full aspect-square bg-white/10 rounded-lg flex items-center justify-center overflow-hidden"
@@ -156,34 +201,29 @@ function Main() {
           <p className="text-gray-400 text-sm mt-2">Your Avatar</p>
         </div>
 
-        <div className="flex flex-col items-center w-full sm:w-1/2">
-          <div className="w-full aspect-square bg-white/5 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-            {cloths.length > 0 ? <SelectedCloths /> : "Select Clothes From Side Menu"}
-          </div>
-          <p className="text-gray-400 text-sm mt-2">Clothes</p>
-        </div>
+        
       </div>
-
+      {/* to here */}
       <div className="fixed bottom-4 w-full flex justify-center z-10">
-        <div className="flex w-full max-w-5xl bg-white/20 p-3 gap-3 shadow-md backdrop-blur-3xl rounded-lg">
+        <div className="flex w-full font-fustat font-black max-w-3xl bg-black/80 p-2 gap-3 shadow-md backdrop-blur-sm focus-within:backdrop-blur-2xl transition-all duration-300 ease-in-out rounded-lg">
           <input
             type="text"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe the style..."
+            placeholder="Re-imagine Yourself.."
             className="flex-1 text-gray-200 rounded-lg px-4 py-2 placeholder-gray-500 focus:outline-none"
           />
           <button
             onClick={handleEnhance}
             disabled={loading}
-            className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-5 py-2 rounded-lg transition"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold aspect-square h-full rounded-full transition flex justify-center items-center"
           >
-            <img src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Star2.png" className="scale-110 hover:animate-spin transition-all" alt="" />
+            <img src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Star2.png" className="h-1/2 hover:animate-spin transition-all" alt="" />
           </button>
           <button
             onClick={handleGenerate}
             disabled={loading}
-            className="bg-primary-tint text-black font-bold px-6 py-2 rounded-lg transition"
+            className="bg-primary-tint text-white/80 font-fustat tracking-tight font-bold px-6 py-2 rounded-lg transition"
           >
             {loading ? "Generating..." : "Generate"}
           </button>
@@ -192,7 +232,15 @@ function Main() {
 
       {/* Generated Output */}
       {resultUrl && (
-  <div className="w-full max-w-5xl mt-6 mb-28 relative">
+  <div 
+  ref={dragRefR}
+      onMouseDown={(e) => {
+        const rect = dragRefR.current.getBoundingClientRect();
+        setOffsetR({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        setIsDraggingR(true);
+      }}
+      style={{ position: "absolute", cursor: "grab" }}
+  className="w-full max-w-5xl mt-6 mb-28 relative">
     <div className="flex justify-between items-center mb-2">
       <h2 className="text-gray-300 text-sm">Generated Output:</h2>
       <button

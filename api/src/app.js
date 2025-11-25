@@ -13,6 +13,7 @@ app.use(express.json());
 
 app.use(cors({
   origin: 'https://nanoapp.onrender.com', 
+  // origin: 'http://localhost:5173',
   credentials: true,
 }));
 app.get("/", (req, res) => res.send("✅ Nano Banana API is running..."));

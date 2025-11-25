@@ -10,7 +10,7 @@ dotenv.config();
 export async function generate(imagePaths = [], prompt, requestId) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("❌ GEMINI_API_KEY not found in .env file.");
+    if (!apiKey) throw new Error(" GEMINI_API_KEY not found in .env file.");
 
     const ai = new GoogleGenAI({ apiKey });
 
@@ -44,7 +44,6 @@ export async function generate(imagePaths = [], prompt, requestId) {
           mimeType = "image/jpeg";
         }
 
-        // ✅ Final fallback (some rare cases)
         if (!mimeType.startsWith("image/")) {
           console.warn(`⚠️ Forcing MIME type fallback for: ${path}`);
           mimeType = "image/jpeg";
@@ -83,7 +82,7 @@ export async function generate(imagePaths = [], prompt, requestId) {
 
     return { publicUrl, mimeType };
   } catch (error) {
-    console.error("❌ Error generating image:", error.message);
+    console.error(" Error generating image:", error.message);
     throw error;
   }
 }

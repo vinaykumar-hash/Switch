@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import SideMenu from "../../components/SideMenu";
 import Main from "../../components/Main";
 import Radio from "../../components/Radio";
+import QuickBar from "../../components/QuickBar";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function Dashboard() {
         return;
       }
 
-      console.log(" Logged in user:", user);
+      // console.log(" Logged in user:", user);
       setUser(user);
 
       const { data: profile, error: profileError } = await supabase
@@ -35,7 +36,7 @@ export default function Dashboard() {
       if (profileError) {
         console.error(" Error fetching profile:", profileError);
       } else {
-        console.log(" User profile:", profile);
+        // console.log(" User profile:", profile);
       }
     };
 
@@ -45,8 +46,9 @@ export default function Dashboard() {
   return (
     <div className=" text-white font-kollektif bg-[#111] min-h-screen flex items-center justify-start flex-col">
       {user ? <Header userID={user.id} /> : <p>Loading...</p>}
-      <div className=" flex items-start justify-start w-full flex-1 h-screen">
-        <SideMenu/>
+      <div className="relative flex items-start justify-start w-full flex-1 h-screen">
+        {/* <SideMenu/> */}
+        <QuickBar/>
        {user ? <Main userID={user.id} /> : <p>Loading...</p>}
       </div>
       {/* <Radio/> */}

@@ -1,4 +1,7 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Jolly+Lodger&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600;700&display=swap');
 @font-face {
   font-family: 'Kollektif'; 
   src: url('./assets/fonts/Kollektif.ttf') format('truetype');
@@ -34,10 +37,11 @@
 
 @theme {
   --font-kollektif: 'Kollektif', sans-serif; 
-
+  --font-fustat: 'Fustat', sans-serif;
+  --font-jolly: 'Jolly Lodger', cursive;
   --color-primary: #313647;
   --color-primary-dark: #101010;
-  --color-primary-tint: #FFA239;
+  --color-primary-tint: #FF6D1F;
 }
 
 @theme inline {
