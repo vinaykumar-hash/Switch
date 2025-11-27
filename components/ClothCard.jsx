@@ -27,18 +27,16 @@ function ClothCard({ url }) {
   return (
     <div
       onClick={handleSelect}
-      className={`w-full aspect-square overflow-hidden cursor-pointer relative transition-all duration-200 ${
-    isSelected ? "ring-4 ring-primary scale-105" : "ring-0"
-  }`}
+      className={`flex justify-center items-center w-full aspect-square overflow-hidden cursor-pointer relative transition-all duration-200 `}
     >
       <img
         src={url}
         alt=""
-        className="w-40 h-40 object-cover hover:scale-110 transition-all duration-200"
+        className={`w-40 h-40 object-cover hover:scale-110 transition-all duration-200 ${isSelected ? "rounded-lg" : "rounded-none"}`}
       />
       {isSelected && (
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold text-sm">
-          Selected
+        <div className="font-fustat absolute m-1 top-0 inset-0  text-white font-bold text-sm">
+          <div className="w-3 h-3 rounded-full bg-primary-tint"></div>
         </div>
       )}
     </div>

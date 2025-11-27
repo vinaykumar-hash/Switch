@@ -164,7 +164,7 @@ useEffect(() => {
               <>
                 <img src={avatar} alt="Avatar" className="object-cover w-full h-full" />
                 {hovering && (
-                  <div className="absolute inset-0 bg-black/60 flex justify-center items-center gap-3">
+                  <div className="absolute inset-0  bg-black/50  flex justify-center items-center gap-3">
                     <button
                       onClick={handleEdit}
                       className="bg-primary text-white p-2 rounded-full"
@@ -198,7 +198,7 @@ useEffect(() => {
               </label>
             )}
           </div>
-          <p className="text-gray-400 text-sm mt-2">Your Avatar</p>
+          <p className="absolute top-0 left-0 ml-2 py-1 font-fustat font-semibold pl-2 bg-primary-dark/80 backdrop-blur-sm pr-2 text-white rounded-lg text-sm mt-2">Your Avatar</p>
         </div>
 
         

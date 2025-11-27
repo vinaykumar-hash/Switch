@@ -7,7 +7,7 @@ function MyGenerations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const profileId = localStorage.getItem("ProfileID");
-
+  
   useEffect(() => {
     const fetchCloths = async () => {
       if (!profileId) {
@@ -39,26 +39,26 @@ function MyGenerations() {
   }, [profileId]);
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="bg-black/60 border-l border-white/20 flex flex-col h-full absolute top-0 right-0 px-4 pb-8 pt-4">
       {loading && (
         <div className="absolute h-full w-full bg-white/10 backdrop-blur-3xl z-10 flex justify-center items-center">
           <div className="h-10 w-10 bg-white animate-spin rounded-full"></div>
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto px-4 py-2 scrollbar-hide">
-        <h2 className="text-sm font-semibold mb-2 text-gray-200">
-          My Creations
+      <div className="relative flex-1 overflow-y-auto  scrollbar-hide">
+        <h2 className=" sticky top-0 z-50 flex justify-end mb-2 text-gray-200 py-2 pb-4">
+          <div className="h-1 w-6 bg-white/60 border border-white rounded-lg"></div>
         </h2>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           {error ? (
             <p className="text-red-400">{error}</p>
           ) : cloths.length === 0 ? (
             <p className="text-gray-400">No generated creations yet.</p>
           ) : (
             cloths.map((cloth) => (
-              <MyGenerationsCard key={cloth.id} url={cloth.image_url} />
+              <MyGenerationsCard key={cloth.id} url={cloth.image_url} prompt={cloth.prompt} ele={cloth}/>
             ))
           )}
         </div>

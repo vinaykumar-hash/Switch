@@ -10,7 +10,7 @@ export const getUserGeneratedImages = async (req, res) => {
 
     const { data, error } = await supabase
       .from("generated_images")
-      .select("id, image_url, request_id, created_at")
+      .select("id, image_url, request_id, created_at, prompt")
       .eq("request_id", profileId)
       .order("created_at", { ascending: false });
 

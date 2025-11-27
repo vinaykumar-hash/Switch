@@ -2,6 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Jolly+Lodger&display=swap');
 
 @import url('https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600;700&display=swap');
+body {
+  cursor: url('./assets/cursor.png') 0 0, auto;
+}
+
+
 @font-face {
   font-family: 'Kollektif'; 
   src: url('./assets/fonts/Kollektif.ttf') format('truetype');

@@ -43,18 +43,18 @@ function ClothsSideMenu() {
   };
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className=" flex flex-col h-full relative">
       {loading ? <div className="absolute h-full w-full  backdrop-blur-3xl z-10 flex justify-center items-center">
         <div className="font-jolly text-4xl text-black animate-pulse">Switch</div>
       </div> : null}
-      <div className="flex-1 overflow-y-auto px-4 py-2 scrollbar-hide">
-        <h2 className="text-sm font-semibold mb-2 text-gray-200 font-fustat ">
+      <div className="flex-1 overflow-y-auto py-2 scrollbar-hide">
+        <h2 className="text-sm font-semibold pl-2 text-gray-200 font-fustat ">
           Clothes
         </h2>
 
         <div className="grid grid-cols-2">
           {loading ? (
-            <p className="text-gray-400">Loading...</p>
+            <p></p>
           ) : error ? (
             <p className="text-red-400">{error}</p>
           ) : cloths.length === 0 ? (

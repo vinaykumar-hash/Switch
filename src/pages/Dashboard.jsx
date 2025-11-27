@@ -6,11 +6,12 @@ import SideMenu from "../../components/SideMenu";
 import Main from "../../components/Main";
 import Radio from "../../components/Radio";
 import QuickBar from "../../components/QuickBar";
+import MyGenerations from "../../components/MyGenerations";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-
+  const showGenerated = useState(false);
   useEffect(() => {
     const getProfile = async () => {
       const {
@@ -51,6 +52,7 @@ export default function Dashboard() {
         <QuickBar/>
        {user ? <Main userID={user.id} /> : <p>Loading...</p>}
       </div>
+      {showGenerated ? (<MyGenerations/>) : (<div></div>)}
       {/* <Radio/> */}
     </div>
   );
