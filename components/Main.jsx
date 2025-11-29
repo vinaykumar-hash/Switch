@@ -5,6 +5,8 @@ import axios from "axios";
 import heic2any from "heic2any";
 
 function Main() {
+  const resultRefs = React.useRef([]);
+
   const dragRef = React.useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -14,7 +16,7 @@ function Main() {
   const [avatar, setAvatar] = useState(localStorage.getItem("userAvatar") || "");
   const [cloths, setCloths] = useState([]);
   const [hovering, setHovering] = useState(false);
-  const [resultUrl, setResultUrl] = useState("");
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   useEffect(() => {
@@ -100,25 +102,35 @@ useEffect(() => {
   };
 
   const handleGenerate = async () => {
-    if (loading) return;
-    if (!localStorage.getItem("userAvatar")) return alert("Please upload an avatar first!");
-    try {
-      setLoading(true);
-      setResultUrl("");
-      const body = {
-        id: localStorage.getItem("ProfileID"),
-        imageUrls: [localStorage.getItem("userAvatar"), ...cloths],
-        prompt,
-      };
-      const response = await axios.post(import.meta.env.VITE_BACKEND_URL+"/api/gemini/edit-image", body);
-      if (response.data?.url) setResultUrl(response.data.url);
-      else alert("No image URL returned by API");
-    } catch (error) {
-      alert("Error calling API: " + error.message);
-    } finally {
-      setLoading(false);
+  if (loading) return;
+  if (!localStorage.getItem("userAvatar")) return alert("Please upload an avatar first!");
+
+  try {
+    setLoading(true);
+
+    const body = {
+      id: localStorage.getItem("ProfileID"),
+      imageUrls: [localStorage.getItem("userAvatar"), ...cloths],
+      prompt,
+    };
+
+    const response = await axios.post(
+      import.meta.env.VITE_BACKEND_URL + "/api/gemini/edit-image",
+      body
+    );
+
+    if (response.data?.url) {
+      setResults(prev => [...prev, response.data.url]);  // append
+    } else {
+      alert("No image URL returned by API");
     }
-  };
+  } catch (error) {
+    alert("Error calling API: " + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleEnhance = async () => {
     try {
@@ -153,7 +165,7 @@ useEffect(() => {
         setIsDragging(true);
       }}
       style={{ position: "absolute", cursor: "grab" }}
-      className="absolute bottom-0 flex flex-col sm:flex-row gap-6 w-full max-w-5xl">
+      className="noselect absolute bottom-0 flex flex-col sm:flex-row gap-6 w-full max-w-5xl">
         <div className="flex flex-col items-center w-full sm:w-1/2">
           <div
             className="relative w-full aspect-square bg-white/10 rounded-lg flex items-center justify-center overflow-hidden"
@@ -204,6 +216,7 @@ useEffect(() => {
         
       </div>
       {/* to here */}
+      
       <div className="fixed bottom-4 w-full flex justify-center z-10">
         <div className="flex w-full font-fustat font-black max-w-3xl bg-black/80 p-2 gap-3 shadow-md backdrop-blur-sm focus-within:backdrop-blur-2xl transition-all duration-300 ease-in-out rounded-lg">
           <input
@@ -231,57 +244,90 @@ useEffect(() => {
       </div>
 
       {/* Generated Output */}
-      {resultUrl && (
-  <div 
-  ref={dragRefR}
-      onMouseDown={(e) => {
-        const rect = dragRefR.current.getBoundingClientRect();
-        setOffsetR({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-        setIsDraggingR(true);
-      }}
-      style={{ position: "absolute", cursor: "grab" }}
-  className="w-full max-w-5xl mt-6 mb-28 relative">
-    <div className="flex justify-between items-center mb-2">
-      <h2 className="text-gray-300 text-sm">Generated Output:</h2>
-      <button
-        onClick={() => setResultUrl("")}
-        className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm transition"
+      {results.length > 0 &&
+  results.map((url, index) => {
+    const ref = (el) => (resultRefs.current[index] = el);
+
+    const handleMouseDown = (e) => {
+      const el = resultRefs.current[index];
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      el.dataset.dragging = "true";
+
+      el.dataset.offsetX = e.clientX - rect.left;
+      el.dataset.offsetY = e.clientY - rect.top;
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleMouseMove = (e) => {
+      const el = resultRefs.current[index];
+      if (!el || el.dataset.dragging !== "true") return;
+
+      el.style.left = `${e.clientX - el.dataset.offsetX}px`;
+      el.style.top = `${e.clientY - el.dataset.offsetY}px`;
+    };
+
+    const handleMouseUp = () => {
+      const el = resultRefs.current[index];
+      if (!el) return;
+      el.dataset.dragging = "false";
+
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    return (
+      <div
+        key={index}
+        ref={ref}
+        onMouseDown={handleMouseDown}
+        style={{
+          position: "absolute",
+          cursor: "grab",
+          left: "60vw",
+          top: `${20 + index * 15}px`,
+          zIndex: 0+index,
+        }}
+        className="w-[300px] aspect-square relative noselect"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="w-4 h-4"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6 18L18 6M6 6l12 12"
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-gray-300 text-sm font-fustat opacity-50 bg-white/10 rounded-lg py-1 px-4 ">Generated Output {index +1}</h2>
+          {/* <button
+            onClick={() =>
+              setResults((prev) => prev.filter((_, i) => i !== index))
+            }
+            className="flex items-center gap-1 text-red-400 hover:text-red-300 text-sm transition"
+          >
+            Delete
+          </button> */}
+        </div>
+
+        <div className="relative w-full h-full aspect-square rounded-lg overflow-hidden group">
+          <img
+            src={url}
+            alt="Generated Result"
+            className="w-full h-full object-cover border border-gray-700"
           />
-        </svg>
-        Delete
-      </button>
-    </div>
 
-    <div className="relative group">
-      <img
-        src={resultUrl}
-        alt="Generated Result"
-        className="w-full max-h-[400px] object-contain rounded-lg border border-gray-700"
-      />
+          <button
+            onClick={() =>
+              setResults((prev) => prev.filter((_, i) => i !== index))
+            }
+            className="font-fustat absolute top-3 right-3 bg-black/50 backdrop-blur-2xl hover:bg-black/70 
+              text-white text-xs px-3 py-1 rounded-md opacity-0 
+              group-hover:opacity-100 transition"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    );
+  })}
 
-      {/* Hover delete overlay (optional) */}
-      <button
-        onClick={() => setResultUrl("")}
-        className="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition"
-      >
-        Delete
-      </button>
-    </div>
-  </div>
-)}
+
 
     </div>
   );

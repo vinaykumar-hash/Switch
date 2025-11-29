@@ -11,7 +11,7 @@ import MyGenerations from "../../components/MyGenerations";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const showGenerated = useState(false);
+  const [showGenerated, setShowGenerated] = useState(false);
   useEffect(() => {
     const getProfile = async () => {
       const {
@@ -52,7 +52,7 @@ export default function Dashboard() {
         <QuickBar/>
        {user ? <Main userID={user.id} /> : <p>Loading...</p>}
       </div>
-      {showGenerated ? (<MyGenerations/>) : (<div></div>)}
+      <MyGenerations show = {showGenerated}/>
       {/* <Radio/> */}
     </div>
   );

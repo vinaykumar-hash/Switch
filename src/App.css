@@ -172,3 +172,15 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+/* Disable text selection */
+.noselect {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Disable image dragging */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}

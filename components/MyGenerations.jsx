@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import MyGenerationsCard from "./MyGenerationsCard";
 import axios from "axios";
 
-function MyGenerations() {
+function MyGenerations({show, onClose}) {
   const [cloths, setCloths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,7 +39,9 @@ function MyGenerations() {
   }, [profileId]);
 
   return (
-    <div className="bg-black/60 border-l border-white/20 flex flex-col h-full absolute top-0 right-0 px-4 pb-8 pt-4">
+    <>
+    {show ? (
+      <div className="backdrop-blur-2xl bg-black/60 border-l border-white/20 flex flex-col h-screen fixed top-0 right-0 px-4 pb-8 pt-4">
       {loading && (
         <div className="absolute h-full w-full bg-white/10 backdrop-blur-3xl z-10 flex justify-center items-center">
           <div className="h-10 w-10 bg-white animate-spin rounded-full"></div>
@@ -47,8 +49,8 @@ function MyGenerations() {
       )}
 
       <div className="relative flex-1 overflow-y-auto  scrollbar-hide">
-        <h2 className=" sticky top-0 z-50 flex justify-end mb-2 text-gray-200 py-2 pb-4">
-          <div className="h-1 w-6 bg-white/60 border border-white rounded-lg"></div>
+        <h2 className=" sticky top-0 z-50 flex justify-end mb-2 text-gray-200 py-2 pb-4 pr-2">
+          <div onClick={onClose} className="h-1 w-6 bg-white/60 border border-white rounded-lg"></div>
         </h2>
 
         <div className="grid grid-cols-1 gap-3">
@@ -64,6 +66,9 @@ function MyGenerations() {
         </div>
       </div>
     </div>
+    ) : (<></>)}
+    </>
+    
   );
 }
 
