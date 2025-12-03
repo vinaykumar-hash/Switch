@@ -248,7 +248,7 @@ useEffect(() => {
             disabled={loading}
             className="bg-purple-600 hover:bg-purple-700 text-white font-semibold aspect-square h-full rounded-full transition flex justify-center items-center"
           >
-            <img src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Star2.png" className="h-1/2 hover:animate-spin transition-all" alt="" />
+            <img src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Star2.png" className="h-1/2 hover:animate-spin duration-500 ease-initial transition-all" alt="" />
           </button>
           <button
             onClick={handleGenerate}

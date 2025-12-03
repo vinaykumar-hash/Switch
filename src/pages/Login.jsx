@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import Prism from "../../components/reactbits/Prism.jsx";
 import supabase from "../supaBase.js";
 import { useNavigate } from "react-router-dom";
 import ColorBends from "../../components/reactbits/ColorBends.jsx";
@@ -69,7 +69,7 @@ export default function Login() {
   };
 
   return (
-    <div className="relative bg-black overflow-hidden flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 font-fustat">
+    <div className="relative bg-black overflow-hidden flex min-h-screen flex-col justify-center font-fustat">
       <div className="absolute z-0"></div>
       {/* <div style={{ position: 'absolute', overflow: 'hidden' }} className="z-0 w-full h-full">
   <FaultyTerminal
@@ -92,6 +92,20 @@ export default function Login() {
     brightness={0.1}
   />
 </div> */}
+{/* <img className="absolute blur-3xl" src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/signupBack.jpeg" alt="" /> */}
+      {/* <div style={{ width: '100%', height: '100vh', position: 'absolute' }}>
+          <Prism
+            animationType="rotate"
+            timeScale={0.1}
+            height={3.5}
+            baseWidth={5.5}
+            scale={3.6}
+            hueShift={0}
+            colorFrequency={0.25}
+            noise={0}
+            glow={1}
+          />
+          </div> */}
       <div className="relative z-10 flex flex-col justify-center mx-80 py-20 rounded-lg bg-primary-dark">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm z-10 rounded-lg">
         <h2 className=" mt-10 text-center text-4xl font-bold tracking-tight text-white">

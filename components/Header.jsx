@@ -55,7 +55,7 @@ function Header({userID}) {
     </div>;
   return (
     <div className=' absolute top-0 z-100 w-full m-4 mb-0 mt-0 flex justify-center items-center px-4 py-2 pl-6 gap-2'>
-        <div className='shadow-xl shadow-black/20 bg-black/10  font-fustat font-bold px-4 py-2 rounded-lg backdrop-blur-sm'>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <a onClick={()=>{setShowMenu(!showMenu)}} className='font-bold text-2xl px-2 cursor-pointer'>:</a></div>
+        <div className='text-white/50 shadow-xl shadow-black/20 bg-black/10  font-fustat font-bold px-4 py-2 rounded-lg backdrop-blur-sm'>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <a onClick={()=>{setShowMenu(!showMenu)}} className='font-bold text-2xl px-2 cursor-pointer'>:</a></div>
         
         <div className={` shadow-xl shadow-black/20 cursor-pointer rounded-lg flex justify-center items-center gap-2 transition-all ease-in-out duration-100 ${showMenu ? "scale-x-100 translate-x-0 ":"-translate-x-1/2 scale-x-0"} `}><a className='bg-black/10  font-fustat font-bold px-4 py-3 rounded-lg backdrop-blur-sm' onClick={()=>{setShowGenerations(!showGenerations)}}>My Switchs</a></div>
         <a onClick={handleLogout} className={`${showMenu ? "scale-x-100 translate-x-0 ":"-translate-x-1/2 scale-x-0"}`}><img className='w-10 rounded-full' src={profile.avatar_url} alt="" /></a>
