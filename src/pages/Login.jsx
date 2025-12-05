@@ -1,8 +1,8 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
-import Prism from "../../components/reactbits/Prism.jsx";
+import { motion } from "framer-motion";
 import supabase from "../supaBase.js";
 import { useNavigate } from "react-router-dom";
-import ColorBends from "../../components/reactbits/ColorBends.jsx";
 export default function Login() {
   const navigate = useNavigate();
   useEffect(() => {
@@ -69,120 +69,99 @@ export default function Login() {
   };
 
   return (
-    <div className="relative bg-black overflow-hidden flex min-h-screen flex-col justify-center font-fustat">
-      <div className="absolute z-0"></div>
-      {/* <div style={{ position: 'absolute', overflow: 'hidden' }} className="z-0 w-full h-full">
-  <FaultyTerminal
-    scale={1.5}
-    gridMul={[2, 1]}
-    digitSize={1.2}
-    timeScale={0.8}
-    pause={false}
-    scanlineIntensity={1}
-    glitchAmount={1}
-    flickerAmount={1}
-    noiseAmp={1}
-    chromaticAberration={0}
-    dither={0}
-    curvature={0.1}
-    tint="#A3B087"
-    mouseReact={true}
-    mouseStrength={0.5}
-    pageLoadAnimation={false}
-    brightness={0.1}
-  />
-</div> */}
-{/* <img className="absolute blur-3xl" src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/signupBack.jpeg" alt="" /> */}
-      {/* <div style={{ width: '100%', height: '100vh', position: 'absolute' }}>
-          <Prism
-            animationType="rotate"
-            timeScale={0.1}
-            height={3.5}
-            baseWidth={5.5}
-            scale={3.6}
-            hueShift={0}
-            colorFrequency={0.25}
-            noise={0}
-            glow={1}
-          />
-          </div> */}
-      <div className="relative z-10 flex flex-col justify-center mx-80 py-20 rounded-lg bg-primary-dark">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm z-10 rounded-lg">
-        <h2 className=" mt-10 text-center text-4xl font-bold tracking-tight text-white">
-          Sign in
-        </h2>
-      </div>
+    <div className="min-h-screen w-full bg-black text-white flex overflow-hidden font-fustat">
+      {/* Background Grid */}
+      <div className="absolute inset-0 h-full w-full bg-black bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      
+      {/* Left Side - Branding */}
+      <motion.div 
+        initial={{ x: "-100%" }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="hidden lg:flex flex-col justify-center gap-10 w-1/2 min-h-screen p-12 bg-black z-10"
+      >
+        <div>
+          <h1 className="font-jolly text-6xl font-bold cursor-pointer" onClick={() => navigate('/')}>
+            <span className="text-primary-tint">S</span>witch
+          </h1>
+          <p className="mt-4 text-white/60 max-w-md">
+            Welcome back. Instantly generate, try-on, and modify clothing with the power of AI.
+          </p>
+        </div>
+        <div className="w-full h-1/2 rounded-2xl bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1545291730-faff8ca1d4b0?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"}}>
+        </div>
+      </motion.div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm z-10">
-        <form className="space-y-6" onSubmit={handleLogin}>
-          <div>
-            <label
-              htmlFor="email"
-              className="font-fustat block text-sm font-medium text-gray-100"
-            >
-              Email 
-            </label>
-            <div className="mt-1">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                placeholder="your@email.com"
-                value={formData.email}
-                onChange={handleChange}
-                className="font-fustat block w-full rounded-md bg-white/5 p-4 text-base text-white placeholder:text-gray-500 outline-none sm:text-sm"
-              />
-            </div>
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 min-h-screen flex items-center justify-center p-8 z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.5 }}
+          className="w-full max-w-md"
+        >
+          <div className="text-center lg:text-left mb-10">
+            <h2 className="text-4xl font-bold tracking-tight text-white">
+              Sign in to Switch
+            </h2>
+            <p className="text-white/60 mt-2">
+              Enter your details below.
+            </p>
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="font-fustat block text-sm font-medium text-gray-100"
-            >
-              Password
-            </label>
-            <div className="mt-1">
+          <form className="space-y-5" onSubmit={handleLogin}>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+                Email address
+              </label>
               <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleChange}
-                className="font-fustat block w-full rounded-md bg-white/5 p-4 text-base text-white placeholder:text-gray-500 focus:outline-2 focus:outline-primary sm:text-sm"
-              />
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="you@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
+                />
             </div>
-          </div>
 
-          <div className="relative">
-            <div className='absolute h-1/2 w-3/4 bg-primary-tint rounded-t-full'></div>
-        
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+                Password
+              </label>
+              <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
+                />
+            </div>
+
             <button
               type="submit"
               disabled={loading}
-              style={{backdropFilter:"blur(200px)"}}
-              className="flex w-full justify-center bg-white/5 text-sm font-semibold text-white font-fustat hover:bg-primary-tint/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-tint px-6 py-2 rounded-full border border-white/10"
+              className="flex w-full justify-center bg-primary-tint text-black text-base font-bold hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-tint px-6 py-3 rounded-lg transition-opacity mt-4 disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
-          </div>
-        </form>
+          </form>
 
-        <p className="font-fustat mt-10 text-center text-sm text-gray-400">
-          New here?{" "}
-          <a
-            href="/signup"
-            className="font-semibold text-primary-tint/60 hover:text-primary-tint/80"
-          >
-            Sign up
-          </a>
-        </p>
+          <p className="mt-8 text-center text-sm text-gray-400">
+            New here?{" "}
+            <a
+              href="/signup"
+              className="font-semibold text-primary-tint hover:text-primary-tint/80 transition"
+            >
+              Sign up
+            </a>
+          </p>
+        </motion.div>
       </div>
-      </div>
-      
     </div>
   );
 }

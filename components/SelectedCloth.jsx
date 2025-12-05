@@ -19,20 +19,20 @@ function SelectedCloths() {
   }, []);
 
   return (
-    <div className="flex-1 bg-white/10 rounded-xl border border-dashed border-gray-600 flex items-center justify-center p-4 min-h-[15rem]">
+    <div className="flex-1 overflow-y-auto scrollbar-hide bg-white/5 rounded-lg p-2">
       {cloths.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+        <div className="grid grid-cols-2 gap-2 w-full">
           {cloths.map((cloth, index) => (
             <img
               key={index}
               src={cloth}
               alt={`Cloth ${index + 1}`}
-              className="w-full h-40 object-cover rounded-lg"
+              className="w-full aspect-square object-cover rounded-lg"
             />
           ))}
         </div>
       ) : (
-        <p className="text-gray-400 text-center">
+        <p className="text-gray-400 text-center text-sm h-full flex items-center justify-center">
           Select Cloths from the Menu
         </p>
       )}

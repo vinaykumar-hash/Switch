@@ -1,21 +1,18 @@
-import React, { use } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import supabase from '../src/supaBase'
-import { useState,useEffect } from 'react'
-import Hamburger from 'hamburger-react'
 import { useNavigate } from 'react-router-dom'
 import MyGenerations from './MyGenerations'
-function Header({userID}) {
+import { motion, AnimatePresence } from 'framer-motion'
+import { LogOut, Image } from 'lucide-react'
+
+function Header({userID, onShowGenerations}) {
     const [time, setTime] = useState(new Date());
     const navigate = useNavigate();
-    const [isOpen, setOpen] = useState(false)
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [showGenerations, setShowGenerations] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
-    const navigateToSetup = () => {
-      
-      navigate('/setup');
-    };
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
+
     useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
@@ -23,6 +20,7 @@ function Header({userID}) {
 
     return () => clearInterval(interval);
   }, []);
+
     useEffect(() => {
     const fetchProfile = async () => {
       
@@ -45,23 +43,71 @@ function Header({userID}) {
 
     fetchProfile();
   }, []);
+
+  // Close menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.clear();
     window.location.href = "/login";
   };
-  if (loading) return <div className=' absolute top-0 z-100 w-full m-4 mb-0 mt-0 flex justify-center items-center px-4 py-2 pl-6 gap-2'>
-        <div className='shadow-xl shadow-black/20 bg-black/10  font-fustat font-bold px-4 py-2 rounded-lg backdrop-blur-sm'>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <a onClick={()=>{setShowMenu(!showMenu)}} className='font-bold text-2xl px-2 cursor-pointer'>:</a></div>
-    </div>;
-  return (
-    <div className=' absolute top-0 z-100 w-full m-4 mb-0 mt-0 flex justify-center items-center px-4 py-2 pl-6 gap-2'>
-        <div className='text-white/50 shadow-xl shadow-black/20 bg-black/10  font-fustat font-bold px-4 py-2 rounded-lg backdrop-blur-sm'>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <a onClick={()=>{setShowMenu(!showMenu)}} className='font-bold text-2xl px-2 cursor-pointer'>:</a></div>
-        
-        <div className={` shadow-xl shadow-black/20 cursor-pointer rounded-lg flex justify-center items-center gap-2 transition-all ease-in-out duration-100 ${showMenu ? "scale-x-100 translate-x-0 ":"-translate-x-1/2 scale-x-0"} `}><a className='bg-black/10  font-fustat font-bold px-4 py-3 rounded-lg backdrop-blur-sm' onClick={()=>{setShowGenerations(!showGenerations)}}>My Switchs</a></div>
-        <a onClick={handleLogout} className={`${showMenu ? "scale-x-100 translate-x-0 ":"-translate-x-1/2 scale-x-0"}`}><img className='w-10 rounded-full' src={profile.avatar_url} alt="" /></a>
-        <MyGenerations show = {showGenerations} onClose={() => setShowGenerations(false)}/>
 
-    </div>
+  if (loading) return (
+    <header className='absolute top-0 z-50 w-full p-4'>
+      <div className='w-24 h-10 bg-black/20 backdrop-blur-sm rounded-lg animate-pulse'></div>
+    </header>
+  );
+
+  return (
+    <>
+      <header className='absolute top-0 z-50 w-full flex justify-between items-center px-6 py-4'>
+          <div className='text-white/60 font-fustat font-semibold px-4 py-2 rounded-lg'>
+            {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </div>
+          
+          <div ref={menuRef} className="relative">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="rounded-full transition-transform hover:scale-105 cursor-none">
+              <img className='w-10 h-10 rounded-full border-2 border-white/20' src={profile.avatar_url} alt="User Avatar" />
+            </button>
+
+            <AnimatePresence>
+              {menuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="absolute top-14 right-0 w-56 bg-black/50 backdrop-blur-lg border border-white/10 rounded-lg shadow-2xl p-2 font-fustat"
+                >
+                  <div className="px-3 py-2 border-b border-white/10">
+                    <p className="font-bold text-white truncate">{profile.full_name}</p>
+                    <p className="text-xs text-white/60 truncate">{profile.email}</p>
+                  </div>
+                  <div className="py-2">
+                    <button onClick={() => { onShowGenerations(); setMenuOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:bg-white/10 rounded-md transition-colors cursor-none">
+                      <Image size={16} /> My Generations
+                    </button>
+                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:bg-red-500/20 rounded-md transition-colors cursor-none">
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+      </header>
+    </>
   )
 }
 

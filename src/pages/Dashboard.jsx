@@ -11,7 +11,7 @@ import MyGenerations from "../../components/MyGenerations";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [showGenerated, setShowGenerated] = useState(false);
+  const [showGenerations, setShowGenerations] = useState(false);
   useEffect(() => {
     const getProfile = async () => {
       const {
@@ -45,14 +45,14 @@ export default function Dashboard() {
   }, [navigate]);
 
   return (
-    <div className=" text-white font-kollektif bg-[#111] min-h-screen flex items-center justify-start flex-col">
-      {user ? <Header userID={user.id} /> : null}
-      <div className="relative flex items-start justify-start w-full flex-1 h-screen">
+    <div className=" text-white font-kollektif bg-[#111] min-h-screen flex items-center justify-start flex-col cursor-none">
+      {user ? <Header userID={user.id} onShowGenerations={() => setShowGenerations(true)} /> : null} 
+      <div className="relative flex items-start justify-start w-full flex-1">
         {/* <SideMenu/> */}
         <QuickBar/>
        {user ? <Main userID={user.id} /> : null}
       </div>
-      <MyGenerations show = {showGenerated}/>
+      <MyGenerations show={showGenerations} onClose={() => setShowGenerations(false)}/>
       {/* <Radio/> */}
     </div>
   );

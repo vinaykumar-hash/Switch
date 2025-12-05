@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ClothCard from "./ClothCard";
 import axios from "axios";
+import { Sparkles } from "lucide-react";
 
 function ClothsSideMenu() {
   const [cloths, setCloths] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
   const [prompt, setPrompt] = useState("");
 
@@ -41,10 +43,10 @@ Output must contain ONLY the clothing item.
   const fullPrompt = prompt + "\n\n" + systemPrompt;
 
   try {
-    setLoading(true);
+    setGenerating(true);
 
     const response = await axios.post(
-      import.meta.env.VITE_BACKEND_URL + "/api/gemini/generate-cloth",
+      import.meta.env.VITE_BACKEND_URL + "/api/gemini/generate-cloth", // Ensure this endpoint is correct
       { prompt: fullPrompt }
     );
 
@@ -56,51 +58,59 @@ Output must contain ONLY the clothing item.
     console.error("Error generating cloth:", error);
     alert("Error generating cloth");
   } finally {
-    setLoading(false);
+    setGenerating(false);
   }
 };
 
 
   return (
-    <div className=" flex flex-col h-full relative">
-      {loading ? <div className="absolute h-full w-full  backdrop-blur-3xl z-10 flex justify-center items-center">
-        <div className="font-jolly text-4xl text-black animate-pulse">Switch</div>
-      </div> : null}
-      <div className="flex-1 overflow-y-auto py-2 scrollbar-hide">
-        <h2 className="text-sm font-semibold pl-2 text-gray-200 font-fustat ">
+    <div className="flex flex-col h-full relative">
+      <div className="flex-shrink-0 p-2">
+        <h2 className="text-lg font-bold pl-2 text-white font-fustat">
           Clothes
         </h2>
-
-        <div className="grid grid-cols-2">
-          {loading ? (
-            <p></p>
-          ) : error ? (
-            <p className="text-red-400">{error}</p>
-          ) : cloths.length === 0 ? (
-            <p className="text-gray-400">No generated outfits yet.</p>
-          ) : (
-            cloths.map((cloth) => (
-              <ClothCard key={cloth.id} url={cloth.image_url} />
-            ))
-          )}
-        </div>
       </div>
-
-      <div className="absolute bottom-0 w-full font-fustat shadow-2xl shadow-black">
-        <input
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe your outfit..."
-          className="transition-all backdrop-blur-sm duration-300 ease-in-out  focus-within:bg-primary-dark pb-4 mb-1 rounded-lg w-full px-4 p-3 bg-black/80 text-white   outline-none placeholder-gray-400 border border-white/10"
-        />
-
-        <button
-          onClick={handleGenerate}
-          className="w-full text-lg py-2 bg-primary-tint  text-white font-fustat font-bold rounded-lg transition tracking-tight"
-        >
-          Generate
-        </button>
+      
+      <div className="flex-1 overflow-y-auto p-2 scrollbar-hide pb-36">
+        {loading ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="h-6 w-6 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
+          </div>
+        ) : error ? (
+          <p className="text-red-400 text-center py-10">{error}</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-2">
+            {cloths.map((cloth) => (
+                <ClothCard key={cloth.id} url={cloth.image_url} />
+              ))}
+          </div>
+        )}
+      </div>
+      
+      <div className="absolute bottom-0 left-0 right-0 p-4 pt-12  ">
+        <div className="space-y-3">
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Describe an outfit..."
+            className="w-full px-4 py-3  bg-black font-fustat text-white rounded-lg outline-none placeholder-gray-400 border border-white/10  transition-all"
+          />
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="w-full text-base py-3 bg-primary-tint text-black font-fustat font-bold rounded-lg transition-opacity hover:opacity-90 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-none"
+          >
+            {generating ? (
+              <>
+                <div className="h-5 w-5 border-2 border-black/50 border-t-black rounded-full animate-spin"></div>
+                Generating...
+              </>
+            ) : (
+              <><Sparkles size={18} /> Generate</>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import MyGenerationsCard from "./MyGenerationsCard";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
 function MyGenerations({show, onClose}) {
   const [cloths, setCloths] = useState([]);
@@ -38,37 +40,49 @@ function MyGenerations({show, onClose}) {
     fetchCloths();
   }, [profileId]);
 
+  const handleImageSelect = (imageUrl) => {
+    const event = new CustomEvent('addResultToCanvas', { detail: imageUrl });
+    window.dispatchEvent(event);
+    onClose();
+  };
+
   return (
-    <>
-    {show ? (
-      <div className="backdrop-blur-2xl bg-black/60 border-l border-white/20 flex flex-col h-screen fixed top-0 right-0 px-4 pb-8 pt-4">
-      {loading && (
-        <div className="absolute h-full w-full bg-white/10 backdrop-blur-3xl z-10 flex justify-center items-center">
-          <div className="h-10 w-10 bg-white animate-spin rounded-full"></div>
-        </div>
-      )}
-
-      <div className="relative flex-1 overflow-y-auto  scrollbar-hide">
-        <h2 className=" sticky top-0 z-50 flex justify-end mb-2 text-gray-200 py-2 pb-4 pr-2">
-          <div onClick={onClose} className="h-1 w-6 bg-white/60 border border-white rounded-lg"></div>
-        </h2>
-
-        <div className="grid grid-cols-1 gap-3">
-          {error ? (
-            <p className="text-red-400">{error}</p>
-          ) : cloths.length === 0 ? (
-            <p className="text-gray-400">No generated creations yet.</p>
-          ) : (
-            cloths.map((cloth) => (
-              <MyGenerationsCard key={cloth.id} url={cloth.image_url} prompt={cloth.prompt} ele={cloth}/>
-            ))
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="fixed top-0 right-0 h-screen w-full max-w-sm bg-black/50 backdrop-blur-xl border-l border-white/10 z-50 flex flex-col"
+        >
+          {loading && (
+            <div className="absolute h-full w-full bg-black/30 z-10 flex justify-center items-center">
+              <div className="h-8 w-8 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
+            </div>
           )}
-        </div>
-      </div>
-    </div>
-    ) : (<></>)}
-    </>
-    
+
+          <header className="flex items-center justify-between p-4 border-b border-white/10">
+            <h2 className="font-fustat font-bold text-lg text-white">My Generations</h2>
+            <button onClick={onClose} className="p-1 text-white/60 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-none">
+              <X size={20} />
+            </button>
+          </header>
+
+          <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
+            <div className="grid grid-cols-1 gap-4">
+              {error ? (
+                <p className="text-red-400 text-center py-10">{error}</p>
+              ) : !loading && cloths.length === 0 ? (
+                <p className="text-gray-400 text-center py-10">No generations yet.</p>
+              ) : (
+                cloths.map((cloth) => <MyGenerationsCard key={cloth.id} cloth={cloth} onSelect={handleImageSelect} />)
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

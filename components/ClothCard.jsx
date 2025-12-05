@@ -27,7 +27,7 @@ function ClothCard({ url }) {
   return (
     <div
       onClick={handleSelect}
-      className={`flex justify-center items-center w-full aspect-square overflow-hidden cursor-pointer relative transition-all duration-200 `}
+      className={`flex justify-center items-center w-full aspect-square overflow-hidden cursor-none relative transition-all duration-200 `}
     >
       <img
         src={url}
