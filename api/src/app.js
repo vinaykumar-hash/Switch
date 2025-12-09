@@ -12,7 +12,8 @@ const app = express();
 app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://nanoapp.onrender.com"
+  "https://nanoapp.onrender.com",
+  "https://switchstyle.app"
 ];
 app.use(cors({
   origin: function (origin, callback) {
