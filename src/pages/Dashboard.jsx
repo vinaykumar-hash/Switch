@@ -12,13 +12,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [showGenerations, setShowGenerations] = useState(false);
-  
-  const hasReloaded = sessionStorage.getItem("dashboardReloaded");
 
-  if (!hasReloaded) {
-    window.location.reload();
-    return;
-  }
 
   useEffect(() => {
     const getProfile = async () => {
