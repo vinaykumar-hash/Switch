@@ -60,6 +60,7 @@ function Header({userID, onShowGenerations}) {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.clear();
+    sessionStorage.setItem("dashboardReloaded", "false");
     window.location.href = "/login";
   };
 

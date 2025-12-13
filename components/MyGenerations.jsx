@@ -3,7 +3,6 @@ import MyGenerationsCard from "./MyGenerationsCard";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-
 function MyGenerations({show, onClose}) {
   const [cloths, setCloths] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,9 +10,10 @@ function MyGenerations({show, onClose}) {
   const profileId = localStorage.getItem("ProfileID");
   
   useEffect(() => {
+    
     const fetchCloths = async () => {
       if (!profileId) {
-        setError("Profile ID not found in localStorage.");
+        setError("Profile ID not found in localStorage.\n Try to Refresh the page");
         setLoading(false);
         return;
       }

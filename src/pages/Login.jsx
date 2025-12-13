@@ -19,7 +19,7 @@ export default function Login() {
         }
   
         if (user) {
-          navigate('/dashboard');
+          navigate('https://switchstyle.app/dashboard');
         } else {
           
         }
