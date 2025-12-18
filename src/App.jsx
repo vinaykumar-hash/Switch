@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route,Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import Signup from './pages/Signup.jsx'
 import Login from './pages/Login.jsx'
 import './App.css'
@@ -14,7 +14,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/setup" element={<SetupProfile />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/" element={<LanderAI />} />
+      <Route path="/" element={<Lander />} />
     </Routes>
   )
 }
