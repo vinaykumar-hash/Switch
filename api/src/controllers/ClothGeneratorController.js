@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import { saveImageToSupabase } from "../Utils/FileStorageCloths.js";
 import { supabase } from "../config/supaBase.js";
 import { model } from "../config/gemini.js";
-
+import { Redis } from '@upstash/redis';
+const redis = Redis.fromEnv();
 dotenv.config();
 
 
@@ -20,7 +21,6 @@ export const generateCloth = async (req, res) => {
     const ai = new GoogleGenAI({ apiKey });
     
     
-    console.log("passed")
     const response = await ai.models.generateContent({
       model,
       contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -40,7 +40,7 @@ export const generateCloth = async (req, res) => {
 
     const requestId = uuidv4();
     const publicUrl = await saveImageToSupabase(buffer, mimeType, requestId, prompt);
-
+    await Redis.del("ClothesGenerated");
     res.json({ success: true, url: publicUrl, prompt });
   } catch (error) {
     console.error(" Error generating cloth image:", error.message);
@@ -50,14 +50,23 @@ export const generateCloth = async (req, res) => {
 
 
 export const getGeneratedCloths = async (req, res) => {
+  const CACHE_KEY = "ClothesGenerated";
   try {
+    const cachedClothes = await redis.get(CACHE_KEY);
+    if (cachedClothes) {
+      return res.status(200).json({ 
+        success: true, 
+        cloths: cachedClothes, 
+        source: "cache"
+      });
+    }
     const { data, error } = await supabase
       .from("generated_cloths")
       .select("id, image_url, prompt, created_at")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-
+    await redis.set(CACHE_KEY, data, { ex: 3600 });
     res.json({ success: true, cloths: data });
   } catch (error) {
     console.error("❌ Error fetching cloths:", error.message);
