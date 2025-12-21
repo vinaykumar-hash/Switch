@@ -6,17 +6,18 @@ import axios from "axios";
 import heic2any from "heic2any";
 
 function Main() {
-  const resultRefs = React.useRef([]);const [selectedBaseImage, setSelectedBaseImage] = useState(
-  localStorage.getItem("selectedBaseImage") || null
-);
+  const resultRefs = React.useRef([]); const [selectedBaseImage, setSelectedBaseImage] = useState(
+    localStorage.getItem("selectedBaseImage") || null
+  );
 
-  const [sizes, setSizes] = useState({}); 
+  const [sizes, setSizes] = useState({});
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [avatar, setAvatar] = useState(localStorage.getItem("userAvatar") || "");
   const [cloths, setCloths] = useState([]);
   const [hovering, setHovering] = useState(false);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [generatingBaseImage, setGeneratingBaseImage] = useState(null);
   const [prompt, setPrompt] = useState("");
   useEffect(() => {
     const loadCloths = () => {
@@ -57,7 +58,7 @@ function Main() {
     try {
       const formData = new FormData();
       formData.append("image", file);
-      const response = await axios.post(import.meta.env.VITE_BACKEND_URL+"/api/temp/upload-avatar", formData, {
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/temp/upload-avatar", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       if (response.data?.url) {
@@ -90,50 +91,52 @@ function Main() {
   };
 
   const handleGenerate = async () => {
-  if (loading) return;
-  if (!localStorage.getItem("userAvatar")) return alert("Please upload an avatar first!");
+    if (loading) return;
+    const baseImg = selectedBaseImage || avatar;
+    if (!baseImg) return alert("Please upload an avatar or select a base image first!");
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
+      setGeneratingBaseImage(baseImg);
 
-    const body = {
-      id: localStorage.getItem("ProfileID"),
-      imageUrls: [
-          selectedBaseImage || localStorage.getItem("userAvatar"),
+      // Pre-set size for the loading frame if needed
+      const newIndex = results.length;
+      setSizes((s) => ({
+        ...s,
+        [newIndex]: { width: 300, height: 300 }
+      }));
+
+      const body = {
+        id: localStorage.getItem("ProfileID"),
+        imageUrls: [
+          baseImg,
           ...cloths,
         ],
-      prompt: prompt + " " + localStorage.getItem("selectedArtstylePrompt"),
-    };
+        prompt: prompt + " " + localStorage.getItem("selectedArtstylePrompt"),
+      };
 
-    const response = await axios.post(
-      import.meta.env.VITE_BACKEND_URL + "/api/gemini/edit-image",
-      body
-    );
+      const response = await axios.post(
+        import.meta.env.VITE_BACKEND_URL + "/api/gemini/edit-image",
+        body
+      );
 
-    if (response.data?.url) {
-      setResults(prev => {
-        const newIndex = prev.length;
-        setSizes((s) => ({
-          ...s,
-          [newIndex]: { width: 300, height: 300 }
-        }));
-        return [...prev, response.data.url];
-      });
-  // append
-    } else {
-      alert("No image URL returned by API");
+      if (response.data?.url) {
+        setResults(prev => [...prev, response.data.url]);
+      } else {
+        alert("No image URL returned by API");
+      }
+    } catch (error) {
+      alert("Error calling API: " + error.message);
+    } finally {
+      setLoading(false);
+      setGeneratingBaseImage(null);
     }
-  } catch (error) {
-    alert("Error calling API: " + error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   const handleEnhance = async () => {
     try {
-      const response = await axios.post(import.meta.env.VITE_BACKEND_URL+"/api/gemini/optimize-prompt", { prompt });
+      const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/gemini/optimize-prompt", { prompt });
       if (response.data?.optimized_prompt) {
         const enhanced = response.data.optimized_prompt;
         const confirmReplace = window.confirm(
@@ -154,14 +157,14 @@ function Main() {
   };
 
   return (
-    <div className="text-white w-full min-h-screen sm:h-screen bg-primary-dark relative bg-[linear-gradient(to_right,#3332_1px,transparent_1px),linear-gradient(to_bottom,#3332_1px,transparent_1px)] bg-[size:40px_40px] flex flex-col-reverse sm:flex-row overflow-y-auto sm:overflow-hidden sm:cursor-none pb-40 sm:pb-0">
+    <div className="text-white w-full h-full bg-primary-dark relative bg-[linear-gradient(to_right,#3332_1px,transparent_1px),linear-gradient(to_bottom,#3332_1px,transparent_1px)] bg-[size:40px_40px] flex flex-col-reverse sm:flex-row overflow-y-auto sm:overflow-hidden pb-24 sm:pb-0">
       <motion.div className="fixed top-0 left-0 pointer-events-none z-[100] hidden sm:block" animate={{ x: mousePosition.x, y: mousePosition.y }} transition={{ duration: 0 }}>
         <MousePointer2 className="text-white" fill="black" size={24} />
       </motion.div>
 
       {/* Left Panel: Canvas & Results */}
-      <div className="flex-1 h-full relative p-4 sm:pt-24">
-        <div className="w-full h-full min-h-[50vh] sm:min-h-0 border-2 border-dashed border-white/10 rounded-xl relative overflow-hidden">
+      <div className="flex-1 h-full relative p-0 flex flex-col">
+        <div className="w-full flex-1 min-h-[50vh] sm:min-h-0 border-r border-white/10 relative overflow-hidden bg-black/20">
           <div className="absolute inset-0 flex items-center justify-center">
             <p className="font-fustat text-2xl text-white/10">Canvas</p>
           </div>
@@ -179,106 +182,121 @@ function Main() {
               setResults={setResults}
             />
           ))}
+          {generatingBaseImage && (
+            <GeneratedResult
+              key="loading"
+              index={results.length}
+              url={generatingBaseImage}
+              sizes={sizes}
+              setSizes={setSizes}
+              resultRefs={resultRefs}
+              selectedBaseImage={null}
+              setSelectedBaseImage={() => { }}
+              setResults={() => { }}
+              isLoading={true}
+            />
+          )}
+        </div>
+        <div className={`w-full border-t border-r border-white/10 p-4 z-50 flex-shrink-0 fixed bottom-0 left-0 sm:static sm:z-10 transition-all duration-500 bg-[#111]`}>
+          <div className="flex flex-col sm:flex-row font-fustat font-black w-full gap-2 sm:gap-3 transition-all duration-300 ease-in-out">
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Re-imagine Yourself.."
+              className="w-full sm:flex-1 bg-black/30 border border-white/10 text-gray-200 rounded-lg px-4 py-2 placeholder-gray-500 focus:outline-none focus:border-white/20 transition-colors"
+            />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleEnhance}
+                disabled={loading}
+                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold p-3 sm:aspect-square sm:h-full rounded-lg sm:rounded-full transition flex justify-center items-center sm:cursor-none"
+              >
+                <img src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Star2.png" className="h-5 sm:h-1/2 hover:animate-spin duration-500 ease-initial transition-all" alt="" />
+              </button>
+              <button
+                onClick={handleGenerate}
+                disabled={loading}
+                className="flex-1 bg-primary-tint text-black font-fustat tracking-tight font-bold px-6 py-3 sm:py-2 rounded-lg transition hover:opacity-90 disabled:opacity-50 sm:cursor-none"
+              >
+                {loading ? "Generating" : "Generate"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Right Panel: Inputs */}
-      <div className="w-full sm:max-w-xs flex-shrink-0 sm:h-full flex flex-col gap-4 p-4 pt-24">
+      <div className="w-full sm:max-w-xs flex-shrink-0 sm:h-full flex flex-col border-l border-white/10 bg-[#111]">
         {/* Avatar Input */}
-        <div className="bg-black/30 border border-white/10 rounded-xl p-3 backdrop-blur-md space-y-2">
+        <div className="bg-black/30 border-b border-white/10 p-3 backdrop-blur-md space-y-2">
           <h2 className="font-fustat font-semibold text-white/80 px-1">Your Avatar</h2>
           <div className="relative w-full aspect-square bg-white/5 rounded-lg flex items-center justify-center overflow-hidden" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
-              {avatar ? (
-                <>
-                  <img src={avatar} alt="Avatar" className="object-cover w-full h-full" />
-                  {hovering && (
-                    <div className="absolute inset-0 bg-black/60 flex justify-center items-center gap-4">
-                      <button onClick={handleEdit} className="bg-white/10 text-white p-3 rounded-full hover:bg-white/20 transition-colors cursor-none" title="Change Avatar">
-                        <Pencil size={18} />
-                      </button>
-                      <button onClick={handleDelete} className="bg-red-500/20 text-red-400 p-3 rounded-full hover:bg-red-500/30 transition-colors cursor-none" title="Delete Avatar">
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <label htmlFor="avatarUpload" className="text-center text-gray-400 text-sm cursor-pointer hover:text-gray-200 transition p-4 sm:cursor-none">
-                  Click to upload avatar
-                  <input id="avatarUpload" type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
-                </label>
-              )}
+            {avatar ? (
+              <>
+                <img src={avatar} alt="Avatar" className="object-cover w-full h-full" />
+                {hovering && (
+                  <div className="absolute inset-0 bg-black/60 flex justify-center items-center gap-4">
+                    <button onClick={handleEdit} className="bg-white/10 text-white p-3 rounded-full hover:bg-white/20 transition-colors cursor-none" title="Change Avatar">
+                      <Pencil size={18} />
+                    </button>
+                    <button onClick={handleDelete} className="bg-red-500/20 text-red-400 p-3 rounded-full hover:bg-red-500/30 transition-colors cursor-none" title="Delete Avatar">
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <label htmlFor="avatarUpload" className="text-center text-gray-400 text-sm cursor-pointer hover:text-gray-200 transition p-4 sm:cursor-none">
+                Click to upload avatar
+                <input id="avatarUpload" type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+              </label>
+            )}
           </div>
         </div>
 
         {/* Selected Cloths Input */}
-        <div className="bg-black/30 border border-white/10 rounded-xl p-3 backdrop-blur-md sm:flex-1 flex flex-col">
-          <h2 className="font-fustat font-semibold text-white/80 px-1 mb-2">Selected Clothes</h2>
+        <div className="bg-black/30 border-t border-white/10 p-3 backdrop-blur-md sm:flex-1 flex flex-col">
+          <h2 className="font-fustat font-semibold text-white/80 px-1 mb-2 ">Selected Clothes</h2>
           <SelectedCloths />
         </div>
       </div>
 
-      <div className="fixed bottom-0 sm:bottom-4 w-full flex justify-center z-10 px-4 sm:px-0">
-        <div className="flex flex-col sm:flex-row font-fustat font-black w-full max-w-3xl bg-black/80 p-2 gap-2 sm:gap-3 shadow-md backdrop-blur-sm focus-within:backdrop-blur-2xl transition-all duration-300 ease-in-out rounded-lg">
-          <input
-            type="text"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Re-imagine Yourself.."
-            className="w-full sm:flex-1 bg-transparent text-gray-200 rounded-lg px-4 py-2 placeholder-gray-500 focus:outline-none"
-          />
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleEnhance}
-              disabled={loading}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold p-3 sm:aspect-square sm:h-full rounded-lg sm:rounded-full transition flex justify-center items-center sm:cursor-none"
-            >
-              <img src="https://ogcemddocujgszusyyfy.supabase.co/storage/v1/object/public/generated-images/logos/Star2.png" className="h-5 sm:h-1/2 hover:animate-spin duration-500 ease-initial transition-all" alt="" />
-            </button>
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="flex-1 bg-primary-tint text-black font-fustat tracking-tight font-bold px-6 py-3 sm:py-2 rounded-lg transition hover:opacity-90 disabled:opacity-50 sm:cursor-none"
-            >
-              {loading ? "Generating" : "Generate"}
-            </button>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 }
 
-const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBaseImage, setSelectedBaseImage, setResults }) => {
+const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBaseImage, setSelectedBaseImage, setResults, isLoading = false }) => {
   const handleResizeMouseDown = (e) => {
-      e.stopPropagation(); // Don’t trigger drag
-      const startX = e.clientX;
-      const startY = e.clientY;
+    e.stopPropagation(); // Don’t trigger drag
+    const startX = e.clientX;
+    const startY = e.clientY;
 
-      const initialWidth = sizes[index]?.width || 300;
-      const initialHeight = sizes[index]?.height || 300;
+    const initialWidth = sizes[index]?.width || 300;
+    const initialHeight = sizes[index]?.height || 300;
 
-      const onMouseMove = (moveEvent) => {
-        const newWidth = initialWidth + (moveEvent.clientX - startX);
-        const newHeight = initialHeight + (moveEvent.clientY - startY);
+    const onMouseMove = (moveEvent) => {
+      const newWidth = initialWidth + (moveEvent.clientX - startX);
+      const newHeight = initialHeight + (moveEvent.clientY - startY);
 
-        setSizes((prev) => ({
-          ...prev,
-          [index]: {
-            width: Math.max(150, newWidth),   // minimum size
-            height: Math.max(150, newHeight),
-          }
-        }));
-      };
-
-      const onMouseUp = () => {
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
-      };
-
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", onMouseUp);
+      setSizes((prev) => ({
+        ...prev,
+        [index]: {
+          width: Math.max(150, newWidth),   // minimum size
+          height: Math.max(150, newHeight),
+        }
+      }));
     };
+
+    const onMouseUp = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
 
   const ref = (el) => (resultRefs.current[index] = el);
 
@@ -317,7 +335,7 @@ const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBase
 
     newLeft = Math.max(minX, Math.min(newLeft, maxX));
     newTop = Math.max(minY, Math.min(newTop, maxY));
-    
+
     el.style.left = `${newLeft}px`;
     el.style.top = `${newTop}px`;
   };
@@ -351,50 +369,56 @@ const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBase
       </div>
 
       <div className="relative w-full h-full rounded-lg overflow-hidden group">
-          <div
-              onClick={() => {
-                setSelectedBaseImage(url);
-                localStorage.setItem("selectedBaseImage", url);
-              }}
-              className="relative w-full h-full cursor-pointer sm:cursor-none"
-            >
-              <img
-                src={url}
-                alt="Generated Result"
-                className="w-full h-full object-cover"
-              />
+        <div
+          onClick={() => {
+            setSelectedBaseImage(url);
+            localStorage.setItem("selectedBaseImage", url);
+          }}
+          className="relative w-full h-full cursor-pointer sm:cursor-none"
+        >
+          <img
+            src={url}
+            alt="Generated Result"
+            className={`w-full h-full object-cover ${isLoading ? 'blur-sm brightness-50' : ''}`}
+          />
+          {isLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              <div className="h-8 w-8 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
+              <p className="font-fustat font-bold text-white text-lg animate-pulse">Generating...</p>
+            </div>
+          )}
 
-              {selectedBaseImage === url && (
-                <div className="absolute top-2 left-2 bg-primary-dark/80 backdrop-blur-lg px-3 py-1 rounded-md text-xs font-fustat text-white">
-                  Base Image
-                </div>
-              )}
+          {selectedBaseImage === url && !isLoading && (
+            <div className="absolute top-2 left-2 bg-primary-dark/80 backdrop-blur-lg px-3 py-1 rounded-md text-xs font-fustat text-white">
+              Base Image
             </div>
+          )}
+        </div>
+        <button
+          onClick={() =>
+            setResults((prev) => prev.filter((_, i) => i !== index))
+          }
+          className="font-fustat absolute top-2 right-2 bg-black/50 backdrop-blur-lg p-1.5 rounded-full text-white/70 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity sm:cursor-none"
+        >
+          <Trash2 size={14} />
+        </button>
+        {selectedBaseImage === url && (
           <button
-            onClick={() =>
-              setResults((prev) => prev.filter((_, i) => i !== index))
-            }
-            className="font-fustat absolute top-2 right-2 bg-black/50 backdrop-blur-lg p-1.5 rounded-full text-white/70 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity sm:cursor-none"
+            onClick={() => {
+              setSelectedBaseImage(null);
+              localStorage.removeItem("selectedBaseImage");
+            }}
+            className="font-fustat absolute bottom-2 left-2 text-xs bg-black/80 backdrop-blur-lg px-3 py-1 rounded-lg sm:cursor-none"
           >
-            <Trash2 size={14} />
+            Remove Base Image
           </button>
-          {selectedBaseImage === url && (
-              <button
-                onClick={() => {
-                  setSelectedBaseImage(null);
-                  localStorage.removeItem("selectedBaseImage");
-                }}
-                className="font-fustat absolute bottom-2 left-2 text-xs bg-black/80 backdrop-blur-lg px-3 py-1 rounded-lg sm:cursor-none"
-              >
-                Remove Base Image
-              </button>
-            )}
-            <div
-              onMouseDown={handleResizeMouseDown}
-              className="absolute bottom-0 right-0 w-5 h-5 flex items-center justify-center cursor-se-resize"
-            >
-              <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-            </div>
+        )}
+        <div
+          onMouseDown={handleResizeMouseDown}
+          className="absolute bottom-0 right-0 w-5 h-5 flex items-center justify-center cursor-se-resize"
+        >
+          <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+        </div>
       </div>
     </div>
   );

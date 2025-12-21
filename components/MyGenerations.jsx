@@ -3,25 +3,24 @@ import MyGenerationsCard from "./MyGenerationsCard";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-function MyGenerations({show, onClose}) {
+function MyGenerations({ show, onClose, userID }) {
   const [cloths, setCloths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const profileId = localStorage.getItem("ProfileID");
-  
+
   useEffect(() => {
-    
+
     const fetchCloths = async () => {
-      if (!profileId) {
-        setError("Profile ID not found in localStorage.\n Try to Refresh the page");
-        setLoading(false);
+      if (!userID) {
+        // Only show error if we expected a user but didn't get one. 
+        // Or handle gracefully.
         return;
       }
 
       try {
         setLoading(true);
         const response = await axios.get(
-          import.meta.env.VITE_BACKEND_URL+`/api/gemini/generated-images/${profileId}`
+          import.meta.env.VITE_BACKEND_URL + `/api/gemini/generated-images/${userID}`
         );
 
         if (response.data.success) {
@@ -37,8 +36,10 @@ function MyGenerations({show, onClose}) {
       }
     };
 
-    fetchCloths();
-  }, [profileId]);
+    if (show) {
+      fetchCloths();
+    }
+  }, [userID, show]);
 
   const handleImageSelect = (imageUrl) => {
     const event = new CustomEvent('addResultToCanvas', { detail: imageUrl });

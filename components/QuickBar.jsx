@@ -12,10 +12,9 @@ const QuickBarButton = ({ icon, label, onClick, isActive = false }) => {
       <button
         onClick={onClick}
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)} 
-        className={`p-3 rounded-lg transition-colors duration-200 cursor-none ${
-          isActive ? 'bg-primary-tint text-black' : 'text-white/70 hover:bg-white/10 hover:text-white'
-        }`}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`p-3 rounded-lg transition-colors duration-200 cursor-none ${isActive ? 'bg-primary-tint text-black' : 'text-white/70 hover:bg-white/10 hover:text-white'
+          }`}
       >
         {icon}
       </button>
@@ -53,8 +52,8 @@ function QuickBar() {
   return (
     <>
       {/* Desktop QuickBar */}
-      <div className='z-50 h-screen absolute hidden sm:flex flex-row items-start pt-20 pl-6 top-0 left-0 pointer-events-none'>
-        <div className='pointer-events-auto shadow-xl shadow-black/20 border border-white/10 bg-black/30 backdrop-blur-md rounded-xl p-2 flex flex-col gap-2'>
+      <div className='h-full hidden sm:flex flex-row items-start border-r border-white/10 bg-[#111]'>
+        <div className='w-16 h-full shadow-xl shadow-black/20 border-r border-white/10 bg-black/30 backdrop-blur-md p-2 flex flex-col gap-2 flex-shrink-0'>
           <QuickBarButton
             icon={<MousePointer2 size={20} />}
             label="Select"
@@ -78,7 +77,7 @@ function QuickBar() {
             <Undo2 size={20} />
           </button>
         </div>
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto h-full">
           {activePanel === 'clothes' && <SideMenu />}
           {activePanel === 'artstyle' && <Artstyle />}
         </div>
@@ -113,7 +112,7 @@ function QuickBar() {
             </motion.div>
           )}
         </AnimatePresence>
-        <button 
+        <button
           onClick={() => setMobileMenuOpen(prev => !prev)}
           className="p-3 bg-black/50 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl"
         >
@@ -129,13 +128,13 @@ function QuickBar() {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 400, damping: 40 }}
-            className="sm:hidden fixed inset-0 z-40 bg-black/80 backdrop-blur-lg pointer-events-auto"
+            className="sm:hidden fixed inset-0 z-[200] bg-black/80 backdrop-blur-lg pointer-events-auto"
           >
             <div className="w-full h-full pt-12 pb-24">
               {activePanel === 'clothes' && <SideMenu isMobile={true} />}
               {activePanel === 'artstyle' && <Artstyle isMobile={true} />}
             </div>
-            <button 
+            <button
               onClick={() => setActivePanel(null)}
               className="absolute top-4 right-4 text-white/70 bg-white/10 py-2 px-4 rounded-full"
             >

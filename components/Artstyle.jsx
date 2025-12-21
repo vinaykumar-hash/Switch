@@ -15,7 +15,7 @@ function Artstyle({ isMobile = false }) {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get(import.meta.env.VITE_BACKEND_URL+`/api/gemini/artstyles`);
+        const res = await axios.get(import.meta.env.VITE_BACKEND_URL + `/api/gemini/artstyles`);
         setStyles(res.data.styles || []);
       } catch (err) {
         console.error("Error fetching artstyles:", err);
@@ -34,7 +34,7 @@ function Artstyle({ isMobile = false }) {
       localStorage.setItem("selectedArtstyle", name);
 
       const res = await axios.get(
-        import.meta.env.VITE_BACKEND_URL+`/api/gemini/artstyles/${encodeURIComponent(name)}`
+        import.meta.env.VITE_BACKEND_URL + `/api/gemini/artstyles/${encodeURIComponent(name)}`
       );
 
       const prompt = res.data.prompt;
@@ -47,8 +47,8 @@ function Artstyle({ isMobile = false }) {
   };
 
   return (
-    <div className={`overflow-hidden ${isMobile ? 'h-full w-full p-4' : 'h-[calc(100vh-10rem)] min-w-64'}`}>
-      <div className={`h-full bg-black/30 p-2 rounded-xl backdrop-blur-md flex flex-col ${isMobile ? '' : 'border border-white/10'}`}>
+    <div className={`overflow-hidden ${isMobile ? 'h-full w-full p-4' : 'h-full w-80'}`}>
+      <div className={`h-full bg-black/30 p-2 backdrop-blur-md flex flex-col ${isMobile ? 'rounded-xl border border-white/10' : 'border-r border-white/10'}`}>
         <div className="flex-shrink-0 p-2">
           <h2 className="text-lg font-bold pl-2 text-white font-fustat">Art Styles</h2>
         </div>
@@ -64,11 +64,10 @@ function Artstyle({ isMobile = false }) {
               <li
                 key={index}
                 onClick={() => handleSelect(style.name)}
-                className={`px-3 py-2 rounded-md transition-colors cursor-none ${
-                  selected === style.name
+                className={`px-3 py-2 rounded-md transition-colors cursor-none ${selected === style.name
                     ? "bg-primary-tint text-black"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
-                }`}
+                  }`}
               >
                 {style.name}
               </li>

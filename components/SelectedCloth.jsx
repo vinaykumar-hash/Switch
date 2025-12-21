@@ -32,7 +32,7 @@ function SelectedCloths() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-400 text-center text-sm h-full flex items-center justify-center">
+        <p className="text-gray-400 opacity-40 text-center text-sm h-full flex items-center justify-center font-fustat">
           Select Cloths from the Menu
         </p>
       )}
