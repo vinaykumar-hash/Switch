@@ -32,7 +32,6 @@ export const generateCloth = async (req, res) => {
 
     const candidate = response.candidates?.[0];
     const part = candidate?.content?.parts?.[0];
-    console.log(part)
     if (!part?.inlineData) throw new Error("No image returned from Gemini");
 
     const mimeType = part.inlineData.mimeType || "image/png";
