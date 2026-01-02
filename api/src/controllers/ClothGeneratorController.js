@@ -40,7 +40,7 @@ export const generateCloth = async (req, res) => {
 
     const requestId = uuidv4();
     const publicUrl = await saveImageToSupabase(buffer, mimeType, requestId, prompt);
-    await Redis.del("ClothesGenerated");
+    await redis.del("ClothesGenerated");
     res.json({ success: true, url: publicUrl, prompt });
   } catch (error) {
     console.error(" Error generating cloth image:", error.message);
