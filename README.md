@@ -1,4 +1,4 @@
-NanoFashion
+Switch
 
 A web application for **clothing design, generation, and sharing**.  
 Users can create unique clothing items, experiment with different styles, and share their creations with the community.
