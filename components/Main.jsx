@@ -63,6 +63,10 @@ function Main() {
       });
       if (response.data?.url) {
         localStorage.setItem("userAvatar", response.data.url);
+        // Auto-select as base image
+        localStorage.setItem("selectedBaseImage", response.data.url);
+        setSelectedBaseImage(response.data.url);
+
         setAvatar(response.data.url);
         return response.data.url;
       } else throw new Error("Upload failed");
