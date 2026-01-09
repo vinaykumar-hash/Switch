@@ -13,7 +13,8 @@ app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173",
   "https://nanoapp.onrender.com",
-  "https://switchstyle.app"
+  "https://switchstyle.app",
+  "https://nanofashion-beta.vercel.app"
 ];
 app.use(cors({
   origin: function (origin, callback) {
@@ -25,11 +26,6 @@ app.use(cors({
   },
   credentials: true,
 }));
-// app.use(cors({
-//   // origin: 'https://nanoapp.onrender.com', 
-//   origin: 'http://localhost:5173',
-//   credentials: true,
-// }));
 app.get("/", (req, res) => res.send(" Nano Banana API is running..."));
 
 app.use("/api/gemini", imageEditorRoutes);
