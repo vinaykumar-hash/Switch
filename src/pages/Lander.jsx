@@ -117,14 +117,24 @@ function Lander() {
               </button>
             </div>
 
-            <div className="text-sm text-white/60">
-              <h4 className="text-white font-bold uppercase tracking-widest mb-6">Socials</h4>
-              <ul className="space-y-4">
-                <li><a href="https://github.com/vinaykumar-hash" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">GitHub</a></li>
-                <li><a href="https://www.instagram.com/vinay_kumar.0.0/" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">Instagram</a></li>
-                <li><a href="https://x.com/escapevinay" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">Twitter</a></li>
-                <li><a href="https://www.linkedin.com/in/vinaychoudhary7525" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">LinkedIn</a></li>
-              </ul>
+            <div className="flex flex-col md:flex-row gap-10 md:gap-20 text-sm text-white/60">
+              <div>
+                <h4 className="text-white font-bold uppercase tracking-widest mb-6">Socials</h4>
+                <ul className="space-y-4">
+                  <li><a href="https://github.com/vinaykumar-hash" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">GitHub</a></li>
+                  <li><a href="https://www.instagram.com/vinay_kumar.0.0/" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">Instagram</a></li>
+                  <li><a href="https://x.com/escapevinay" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">Twitter</a></li>
+                  <li><a href="https://www.linkedin.com/in/vinaychoudhary7525" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors cursor-pointer">LinkedIn</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="text-white font-bold uppercase tracking-widest mb-6">Legal</h4>
+                <ul className="space-y-4">
+                  <li><a href="/privacy-policy" className="hover:text-red-500 transition-colors cursor-pointer">Privacy Policy</a></li>
+                  <li><a href="/terms-of-usage" className="hover:text-red-500 transition-colors cursor-pointer">Terms of Usage</a></li>
+                </ul>
+              </div>
             </div>
           </div>
 
