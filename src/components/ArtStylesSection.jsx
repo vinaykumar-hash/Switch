@@ -28,17 +28,18 @@ const marqueeItems = [...styles, ...styles, ...styles, ...styles];
 
 const ArtStylesSection = () => {
     return (
-        <section className="relative z-10 py-20 overflow-hidden border-t border-white/10 bg-black">
-            <div className="flex flex-col items-start text-left md:items-center md:text-center mb-12 px-4">
-                <span className="text-red-500 font-mono text-[10px] tracking-[0.2em] mb-2">/// GENRES</span>
-                <h2 className="text-3xl md:text-5xl font-bold text-white uppercase tracking-tighter">
-                    Precision across <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-600">every style</span>
+        <section className="relative z-10 py-32 overflow-hidden border-t border-white/10 bg-black">
+            <div className="flex flex-col items-center text-center mb-20 px-4">
+                <span className="text-white/40 font-mono text-xs tracking-[0.2em] mb-4 uppercase">Capabilities</span>
+                <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
+                    Precision Across <br />
+                    <span className="text-[var(--color-primary-tint)]">Every Style.</span>
                 </h2>
             </div>
 
             <div className="relative w-full flex">
                 <motion.div
-                    className="flex gap-8 px-4"
+                    className="flex gap-4 px-4"
                     animate={{ x: "-50%" }}
                     transition={{
                         duration: 50,
@@ -51,17 +52,15 @@ const ArtStylesSection = () => {
                     {marqueeItems.map((style, index) => (
                         <div
                             key={index}
-                            className="relative w-64 h-80 md:w-80 md:h-96 flex-shrink-0 overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 group border border-white/10 hover:border-red-500/50"
+                            className="relative w-64 h-80 md:w-80 md:h-[30rem] flex-shrink-0 overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 bg-[#050505]"
                         >
                             <img
                                 src={style.img}
                                 alt={style.name}
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                className="w-full h-full object-cover opacity-60 hover:opacity-100 hover:scale-105 transition-all duration-700"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-                            <div className="absolute bottom-6 left-6">
-                                <span className="text-red-500 font-mono text-xs tracking-widest uppercase block mb-1">Style Preset</span>
-                                <h3 className="text-xl font-bold text-white tracking-wide">{style.name}</h3>
+                            <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black to-transparent">
+                                <h3 className="text-sm font-bold text-white tracking-widest uppercase">{style.name}</h3>
                             </div>
                         </div>
                     ))}
