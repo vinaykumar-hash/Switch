@@ -15,10 +15,10 @@ export const getUserGeneratedImages = async (req, res) => {
     const CACHE_KEY = `images:${profileId}`;
     const cachedImages = await redis.get(CACHE_KEY);
     if (cachedImages) {
-      return res.json({ 
-        success: true, 
-        cloths: cachedImages, 
-        source: "cache" 
+      return res.json({
+        success: true,
+        cloths: cachedImages,
+        source: "cache"
       });
     }
     const { data, error } = await supabase
@@ -35,5 +35,35 @@ export const getUserGeneratedImages = async (req, res) => {
   } catch (error) {
     console.error(" Error fetching user-generated images:", error.message);
     res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const deleteUserGeneratedImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { profileId } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ success: false, error: "Missing Image ID" });
+    }
+
+    // 1. Delete from Database
+    const { error } = await supabase
+      .from("generated_images")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+
+    // 2. Invalidate Cache if profileId provided
+    if (profileId) {
+      const CACHE_KEY = `images:${profileId}`;
+      await redis.del(CACHE_KEY);
+    }
+
+    res.json({ success: true, message: "Image deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    res.status(500).json({ success: false, error: "Failed to delete image" });
   }
 };

@@ -52,8 +52,8 @@ function QuickBar() {
   return (
     <>
       {/* Desktop QuickBar */}
-      <div className='h-full hidden sm:flex flex-row items-start border-r border-white/10 bg-[#111]'>
-        <div className='w-16 h-full shadow-xl shadow-black/20 border-r border-white/10 bg-black/30 backdrop-blur-md p-2 flex flex-col gap-2 flex-shrink-0'>
+      <div className='h-full hidden sm:flex flex-row items-start border-r border-white/10 bg-[#111] relative z-50'>
+        <div className='w-16 h-full shadow-xl shadow-black/20 border-r border-white/10 bg-black/30 backdrop-blur-md p-2 flex flex-col gap-2 flex-shrink-0 z-50 relative'>
           <QuickBarButton
             icon={<MousePointer2 size={20} />}
             label="Select"
@@ -77,10 +77,22 @@ function QuickBar() {
             <Undo2 size={20} />
           </button>
         </div>
-        <div className="pointer-events-auto h-full">
-          {activePanel === 'clothes' && <SideMenu />}
-          {activePanel === 'artstyle' && <Artstyle />}
-        </div>
+
+        {/* Floating Panel */}
+        <AnimatePresence>
+          {activePanel && (
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="absolute left-16 top-0 h-full z-40 bg-[#111] border-r border-white/10 shadow-2xl"
+            >
+              {activePanel === 'clothes' && <SideMenu />}
+              {activePanel === 'artstyle' && <Artstyle />}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Mobile Bottom Bar */}

@@ -7,6 +7,8 @@ import SetupProfile from './pages/SetupPage.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Lander from './pages/Lander.jsx'
 import LanderAI from './pages/LanderAI.jsx'
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
+import TermsOfUsage from './pages/TermsOfUsage.jsx'
 function App() {
   return (
     <Routes>
@@ -15,6 +17,8 @@ function App() {
       <Route path="/setup" element={<SetupProfile />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/" element={<Lander />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-usage" element={<TermsOfUsage />} />
     </Routes>
   )
 }

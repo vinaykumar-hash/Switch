@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import supabase from '../src/supaBase'
 import { useNavigate } from 'react-router-dom'
 import MyGenerations from './MyGenerations'
+import ProfilePopup from './ProfilePopup'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, Image } from 'lucide-react'
+import { LogOut, Image, UserPen } from 'lucide-react'
 
 function Header({ userID, onShowGenerations }) {
   const [time, setTime] = useState(new Date());
@@ -11,6 +12,7 @@ function Header({ userID, onShowGenerations }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -64,6 +66,10 @@ function Header({ userID, onShowGenerations }) {
     window.location.href = "/login";
   };
 
+  const handleProfileUpdate = (updatedProfile) => {
+    setProfile(updatedProfile);
+  };
+
   if (loading) return (
     <header className='absolute top-0 z-50 w-full p-4'>
       <div className='w-24 h-10 bg-black/20 backdrop-blur-sm rounded-lg animate-pulse'></div>
@@ -90,10 +96,22 @@ function Header({ userID, onShowGenerations }) {
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 className="absolute top-14 right-0 w-56 bg-black/50 backdrop-blur-lg border border-white/10 rounded-lg shadow-2xl p-2 font-fustat"
+                onClick={(e) => e.stopPropagation()} // Prevent closing when interacting with menu content
               >
-                <div className="px-3 py-2 border-b border-white/10">
-                  <p className="font-bold text-white truncate">{profile.full_name}</p>
-                  <p className="text-xs text-white/60 truncate">{profile.email}</p>
+                <div
+                  className="px-3 py-2 border-b border-white/10 cursor-pointer hover:bg-white/5 rounded-t-lg transition-colors group"
+                  onClick={() => {
+                    setShowProfilePopup(true);
+                    setMenuOpen(false);
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-white truncate">{profile.full_name}</p>
+                      <p className="text-xs text-white/60 truncate">{profile.email}</p>
+                    </div>
+                    <UserPen size={14} className="text-white/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
                 </div>
                 <div className="py-2">
                   <button onClick={() => { onShowGenerations(); setMenuOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:bg-white/10 rounded-md transition-colors cursor-none">
@@ -108,6 +126,13 @@ function Header({ userID, onShowGenerations }) {
           </AnimatePresence>
         </div>
       </header>
+
+      <ProfilePopup
+        isOpen={showProfilePopup}
+        onClose={() => setShowProfilePopup(false)}
+        currentUserProfile={profile}
+        onUpdate={handleProfileUpdate}
+      />
     </>
   )
 }

@@ -1,32 +1,32 @@
 /* eslint-disable */
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import supabase from "../supaBase.js";
 import { useNavigate } from "react-router-dom";
 export default function Signup() {
   const navigate = useNavigate();
-    useEffect(() => {
+  useEffect(() => {
 
-        const getProfile = async () => {
-          const {
-            data: { user },
-            error: userError,
-          } = await supabase.auth.getUser();
-    
-          if (userError) {
-            console.error("Error fetching user:", userError);
-            return;
-          }
-    
-          if (user) {
-            navigate('/dashboard');
-          } else {
-            
-          }
-        };
-    
-        getProfile();
-      }, [navigate]);
+    const getProfile = async () => {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        return;
+      }
+
+      if (user) {
+        navigate('/dashboard');
+      } else {
+
+      }
+    };
+
+    getProfile();
+  }, [navigate]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -77,32 +77,16 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-black text-white flex overflow-hidden font-fustat">
+    <div className="min-h-screen w-full bg-black text-white flex justify-center items-center overflow-hidden font-fustat">
       {/* Background Grid */}
       <div className="absolute inset-0 h-full w-full bg-black bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-      
+
       {/* Left Side - Branding */}
-      <motion.div 
-        initial={{ x: "-100%" }}
-        animate={{ x: 0 }} 
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden lg:flex flex-col justify-center gap-10 w-1/2 min-h-screen p-12 bg-black z-10"
-      >
-        <div>
-          <h1 className="font-jolly text-6xl font-bold cursor-pointer" onClick={() => navigate('/')}>
-            <span className="text-primary-tint">S</span>witch
-          </h1>
-          <p className="mt-4 text-white/60 max-w-md">
-            Join the new era of digital fashion. Generate, try-on, and modify clothing with the power of AI.
-          </p>
-        </div>
-        <div className="w-full h-1/2 rounded-2xl bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1581338834647-b0fb40704e21?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"}}>
-        </div>
-      </motion.div>
+
 
       {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 min-h-screen flex items-center justify-center p-8 z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
@@ -123,15 +107,15 @@ export default function Signup() {
                 Full Name
               </label>
               <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
-                />
+                id="name"
+                name="name"
+                type="text"
+                required
+                placeholder="John Doe"
+                value={formData.name}
+                onChange={handleChange}
+                className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
+              />
             </div>
 
             <div>
@@ -139,15 +123,15 @@ export default function Signup() {
                 Email address
               </label>
               <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
-                />
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
+              />
             </div>
 
             <div>
@@ -155,15 +139,15 @@ export default function Signup() {
                 Password
               </label>
               <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  placeholder="•••••••• (8+ characters)"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
-                />
+                id="password"
+                name="password"
+                type="password"
+                required
+                placeholder="•••••••• (8+ characters)"
+                value={formData.password}
+                onChange={handleChange}
+                className="block w-full rounded-lg bg-white/5 px-4 py-3 text-base text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-tint transition-all"
+              />
             </div>
 
             <button
@@ -172,6 +156,31 @@ export default function Signup() {
               className="flex w-full justify-center bg-primary-tint text-black text-base font-bold hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-tint px-6 py-3 rounded-lg transition-opacity mt-4 disabled:opacity-50"
             >
               {loading ? "Signing up..." : "Sign up"}
+            </button>
+
+            <div className="relative flex py-2 items-center">
+              <div className="flex-grow border-t border-white/10"></div>
+              <span className="flex-shrink-0 mx-4 text-xs text-white/30 uppercase tracking-widest">Or</span>
+              <div className="flex-grow border-t border-white/10"></div>
+            </div>
+
+            <button
+              type="button"
+              onClick={async () => {
+                const { error } = await supabase.auth.signInWithOAuth({
+                  provider: 'google',
+                  options: {
+                    redirectTo: window.location.origin + '/setup'
+                  }
+                });
+                if (error) alert(error.message);
+              }}
+              className="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl border border-white/10 transition-all flex items-center justify-center gap-3 group"
+            >
+              <svg className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .533 5.347.533 12S5.867 24 12.48 24c3.44 0 6.053-1.147 8.16-3.293 2.133-2.133 2.907-5.04 2.907-7.787 0-.76-.08-1.587-.133-2H12.48z" />
+              </svg>
+              Continue with Google
             </button>
           </form>
 

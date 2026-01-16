@@ -47,6 +47,23 @@ function MyGenerations({ show, onClose, userID }) {
     onClose();
   };
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(import.meta.env.VITE_BACKEND_URL + `/api/gemini/generated-images/${id}`, {
+        data: { profileId: userID } // Send profileId for cache invalidation
+      });
+
+      if (response.data.success) {
+        setCloths((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        alert("Failed to delete image.");
+      }
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Error deleting image");
+    }
+  };
+
   return (
     <AnimatePresence>
       {show && (
@@ -77,7 +94,7 @@ function MyGenerations({ show, onClose, userID }) {
               ) : !loading && cloths.length === 0 ? (
                 <p className="text-gray-400 text-center py-10">No generations yet.</p>
               ) : (
-                cloths.map((cloth) => <MyGenerationsCard key={cloth.id} cloth={cloth} onSelect={handleImageSelect} />)
+                cloths.map((cloth) => <MyGenerationsCard key={cloth.id} cloth={cloth} onSelect={handleImageSelect} onDelete={handleDelete} />)
               )}
             </div>
           </div>
