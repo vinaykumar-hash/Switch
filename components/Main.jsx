@@ -257,24 +257,38 @@ const Main = ({ userID }) => {
         {/* Avatar Input */}
         <div className="bg-black/30 border-b border-white/10 p-3 backdrop-blur-md space-y-2">
           <h2 className="font-fustat font-semibold text-white/80 px-1">Your Avatar</h2>
-          <div className="relative w-full aspect-square bg-white/5 rounded-lg flex items-center justify-center overflow-hidden" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
+          <div
+            className="relative w-full aspect-square bg-white/5 rounded-lg flex items-center justify-center overflow-hidden"
+            onMouseEnter={() => !isMobile && setHovering(true)}
+            onMouseLeave={() => !isMobile && setHovering(false)}
+            onClick={() => isMobile && setHovering(!hovering)}
+          >
             {avatar ? (
               <>
                 <img src={avatar} alt="Avatar" className="object-cover w-full h-full" />
                 {hovering && (
                   <div className="absolute inset-0 bg-black/60 flex justify-center items-center gap-4">
-                    <button onClick={handleEdit} className="bg-white/10 text-white p-3 rounded-full hover:bg-white/20 transition-colors cursor-none" title="Change Avatar">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleEdit(); }}
+                      className="bg-white/10 text-white p-3 rounded-full hover:bg-white/20 transition-colors cursor-none"
+                      title="Change Avatar"
+                    >
                       <Pencil size={18} />
                     </button>
-                    <button onClick={handleDelete} className="bg-red-500/20 text-red-400 p-3 rounded-full hover:bg-red-500/30 transition-colors cursor-none" title="Delete Avatar">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(); }}
+                      className="bg-red-500/20 text-red-400 p-3 rounded-full hover:bg-red-500/30 transition-colors cursor-none"
+                      title="Delete Avatar"
+                    >
                       <Trash2 size={18} />
                     </button>
                   </div>
                 )}
               </>
             ) : (
-              <label htmlFor="avatarUpload" className="text-center text-gray-400 text-sm cursor-pointer hover:text-gray-200 transition p-4 sm:cursor-none">
+              <label htmlFor="avatarUpload" className="font-fustat text-center text-gray-400 text-sm cursor-pointer hover:text-gray-200 transition p-4 sm:cursor-none">
                 Click to upload avatar
+                <p className="text-xs font-fustat text-white/40">Image less than 1MB</p>
                 <input id="avatarUpload" type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
               </label>
             )}
