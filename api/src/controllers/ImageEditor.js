@@ -4,7 +4,7 @@ import { readFile } from "fs";
 import dotenv from "dotenv";
 import { saveImageToSupabase } from "../Utils/FileStorage.js";
 import { model } from "../config/gemini.js";
-import sharp from "sharp"; 
+import sharp from "sharp";
 dotenv.config();
 
 export async function generate(imagePaths = [], prompt, requestId) {
@@ -79,19 +79,20 @@ export async function generate(imagePaths = [], prompt, requestId) {
     const response = await ai.models.generateContent({
       model,
       contents,
-      config: {
-        responseModalities: ["IMAGE"],
+      generationConfig: {
+        responseModalities: ["TEXT", "IMAGE"],
         imageConfig: { imageSize: "1K" },
       },
     });
-    
+
     const candidate = response.candidates?.[0];
     console.log(response)
-    const part = candidate?.content?.parts?.[0];
-    if (!part?.inlineData) throw new Error("No image returned from Gemini");
+    // const part = candidate?.content?.parts?.[0];
+    const imagePart = candidate?.content?.parts?.find(p => p.inlineData);
+    if (!imagePart?.inlineData) throw new Error("Model response parts:", candidate?.content?.parts);
 
-    const mimeType = part.inlineData.mimeType || "image/png";
-    const buffer = Buffer.from(part.inlineData.data || "", "base64");
+    const mimeType = imagePart.inlineData.mimeType || "image/png";
+    const buffer = Buffer.from(imagePart.inlineData.data || "", "base64");
 
     console.log(requestId)
     const publicUrl = await saveImageToSupabase(buffer, mimeType, requestId, prompt);

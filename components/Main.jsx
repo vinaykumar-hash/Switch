@@ -5,8 +5,9 @@ import SelectedCloths from "./SelectedCloth";
 import axios from "axios";
 import heic2any from "heic2any";
 
-function Main() {
-  const resultRefs = React.useRef([]); const [selectedBaseImage, setSelectedBaseImage] = useState(
+const Main = ({ userID }) => {
+  const resultRefs = React.useRef([]);
+  const [selectedBaseImage, setSelectedBaseImage] = useState(
     localStorage.getItem("selectedBaseImage") || null
   );
 
@@ -19,6 +20,23 @@ function Main() {
   const [loading, setLoading] = useState(false);
   const [generatingBaseImage, setGeneratingBaseImage] = useState(null);
   const [prompt, setPrompt] = useState("");
+
+  // Initialize isMobile safely for CSR
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     const loadCloths = () => {
       const stored = JSON.parse(localStorage.getItem("selectedCloths")) || [];
@@ -168,10 +186,12 @@ function Main() {
 
       {/* Left Panel: Canvas & Results */}
       <div className="flex-1 h-full relative p-0 flex flex-col">
-        <div className="w-full flex-1 min-h-[50vh] sm:min-h-0 border-r border-white/10 relative overflow-hidden bg-black/20">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="font-fustat text-2xl text-white/10">Canvas</p>
-          </div>
+        <div className={`w-full flex-1 min-h-[50vh] sm:min-h-0 border-r border-white/10 relative  bg-black/20 ${isMobile ? "overflow-y-auto overflow-x-hidden flex flex-col items-center p-4 gap-4" : "overflow-hidden"}`}>
+          {!isMobile && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <p className="font-fustat text-2xl text-white/10">Canvas</p>
+            </div>
+          )}
           {/* Generated Output */}
           {results.length > 0 && results.map((url, index) => (
             <GeneratedResult
@@ -184,6 +204,7 @@ function Main() {
               selectedBaseImage={selectedBaseImage}
               setSelectedBaseImage={setSelectedBaseImage}
               setResults={setResults}
+              isMobile={isMobile}
             />
           ))}
           {generatingBaseImage && (
@@ -198,6 +219,7 @@ function Main() {
               setSelectedBaseImage={() => { }}
               setResults={() => { }}
               isLoading={true}
+              isMobile={isMobile}
             />
           )}
         </div>
@@ -271,7 +293,7 @@ function Main() {
   );
 }
 
-const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBaseImage, setSelectedBaseImage, setResults, isLoading = false }) => {
+const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBaseImage, setSelectedBaseImage, setResults, isLoading = false, isMobile }) => {
   const handleResizeMouseDown = (e) => {
     e.stopPropagation(); // Don’t trigger drag
     const startX = e.clientX;
@@ -305,6 +327,8 @@ const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBase
   const ref = (el) => (resultRefs.current[index] = el);
 
   const handleMouseDown = (e) => {
+    if (isMobile) return; // Disable drag on mobile
+
     const el = resultRefs.current[index];
     if (!el) return;
 
@@ -353,20 +377,32 @@ const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBase
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
+  // Conditional style application: strictly separate mobile flow from desktop absolute
+  const style = isMobile
+    ? {
+      position: "relative",
+      width: "100%",
+      height: "auto",
+      marginBottom: "16px",
+      zIndex: 10 + index,
+      // Ensure no top/left/absolute interferes
+    }
+    : {
+      position: "absolute",
+      cursor: "grab",
+      left: "50px",
+      top: `${120 + index * 20}px`,
+      zIndex: 10 + index,
+      width: sizes[index]?.width || 300,
+      height: sizes[index]?.height || 300,
+    };
+
   return (
     <div
       ref={ref}
       onMouseDown={handleMouseDown}
-      style={{
-        position: "absolute",
-        cursor: "grab",
-        left: "50px",
-        top: `${120 + index * 20}px`,
-        zIndex: 10 + index,
-        width: sizes[index]?.width || 300,
-        height: sizes[index]?.height || 300,
-      }}
-      className="relative noselect rounded-lg bg-black/30 border border-white/10 backdrop-blur-md shadow-2xl"
+      style={style}
+      className={`relative noselect rounded-lg bg-black/30 border border-white/10 backdrop-blur-md shadow-2xl ${isMobile ? "" : ""}`}
     >
       <div className="absolute -top-8 left-0">
         <h2 className="text-gray-300 text-sm font-fustat bg-black/50 backdrop-blur-lg rounded-t-lg py-1 px-3">Result {index + 1}</h2>
@@ -417,12 +453,14 @@ const GeneratedResult = ({ index, url, sizes, setSizes, resultRefs, selectedBase
             Remove Base Image
           </button>
         )}
-        <div
-          onMouseDown={handleResizeMouseDown}
-          className="absolute bottom-0 right-0 w-5 h-5 flex items-center justify-center cursor-se-resize"
-        >
-          <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-        </div>
+        {!isMobile && (
+          <div
+            onMouseDown={handleResizeMouseDown}
+            className="absolute bottom-0 right-0 w-5 h-5 flex items-center justify-center cursor-se-resize"
+          >
+            <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+          </div>
+        )}
       </div>
     </div>
   );
