@@ -28,8 +28,8 @@ https://switchstyle.app/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/nanofashion.git
-cd nanofashion
+git clone https://github.com/vinaykumar-hash/Switch.git
+cd Switch
 ```
 
 ### 2. Install Frontend Dependencies
